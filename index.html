@@ -83,6 +83,24 @@
 </head>
 <body>
 
+<!-- FIREBASE LOGIN OVERLAY -->
+<div id="loginOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:9999; display:flex; align-items:center; justify-content:center;">
+    <div style="background:white; padding:40px; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.1); width:90%; max-width:400px; text-align:center;">
+        <h2 style="color:var(--primary); margin-top:0;">LUNA FOOD ERP</h2>
+        <p style="color:#6b7280; margin-bottom:25px; font-size:13px;">Secure System Login</p>
+        <div class="form-group" style="text-align:left; margin-bottom:15px;">
+            <label>Email Address</label>
+            <input type="email" id="loginEmail" placeholder="Enter your email" style="width:100%;">
+        </div>
+        <div class="form-group" style="text-align:left; margin-bottom:20px;">
+            <label>Password</label>
+            <input type="password" id="loginPass" placeholder="Enter password" style="width:100%;">
+        </div>
+        <button onclick="attemptLogin()" class="btn btn-success" style="width:100%; padding:10px; font-size:15px;">Login to System</button>
+        <div id="loginError" style="color:var(--danger); margin-top:15px; font-size:13px; font-weight:bold; display:none;"></div>
+    </div>
+</div>
+
 <div class="header">
     <h1>LUNA FOOD - ERP Management System V10.5</h1>
 </div>
@@ -414,6 +432,11 @@
                 <canvas id="shopChart"></canvas>
             </div>
         </div>
+
+        <!-- NEW BATCH LINE CHART -->
+        <div style="background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); position:relative; min-height: 450px; margin-top:30px;">
+            <canvas id="batchLineChart"></canvas>
+        </div>
     </div>
 
     <!-- 8. Notes Tab -->
@@ -466,7 +489,7 @@
     if (!data.partyPrices) data.partyPrices = {};
     if (!data.notes) data.notes = [];
     const itemTypes = ['Oyster', 'Abalone', 'Milki', 'Dry', 'Other'];
-    let shopChartInstance = null; let pieChartInstance = null;
+    let shopChartInstance = null; let pieChartInstance = null; let batchLineChartInstance = null;
 
     // --- Pagination State ---
     let pg = {
@@ -1236,6 +1259,35 @@
         document.querySelector('#reportPurTypeTable tbody').innerHTML = pH;
         document.getElementById('reportPurTypeFoot').innerHTML = `<tr><td class="text-right">Total:</td><td class="text-center">${ptSold}</td><td class="text-right">Rs. ${ptRs.toFixed(2)}</td></tr>`;
 
+        // --- Data Prep for NEW BATCH LINE CHART ---
+        let batchData = {};
+        data.transactions.forEach(t => {
+            if(yF && (!t.batch || !t.batch.startsWith(yF))) return;
+            if(!t.batch) return;
+            if(!batchData[t.batch]) batchData[t.batch] = { in: 0, out: 0 };
+            if(t.type === 'shop') batchData[t.batch].in += parseFloat(t.payment);
+            else batchData[t.batch].out += parseFloat(t.payment);
+        });
+        data.expenses.forEach(e => {
+            if(yF && (!e.batch || !e.batch.startsWith(yF))) return;
+            if(!e.batch) return;
+            if(!batchData[e.batch]) batchData[e.batch] = { in: 0, out: 0 };
+            batchData[e.batch].out += parseFloat(e.total);
+        });
+
+        let sortedBatches = Object.keys(batchData).sort();
+        let chartLabels = [];
+        let chartIn = [];
+        let chartOut = [];
+        let chartProfit = [];
+
+        sortedBatches.forEach(b => {
+            chartLabels.push(b);
+            chartIn.push(batchData[b].in);
+            chartOut.push(batchData[b].out);
+            chartProfit.push(batchData[b].in - batchData[b].out);
+        });
+
         // Charts
         setTimeout(() => {
             if(pieChartInstance) pieChartInstance.destroy();
@@ -1250,6 +1302,24 @@
                 type: 'bar',
                 data: { labels: sNames, datasets: [{ label:'Net Revenue by Shop (Rs)', data: sVals, backgroundColor: '#3b82f6', borderRadius: 4 }] },
                 options: { maintainAspectRatio: false, plugins: { title: {display:true, text:'Shop Performance (Revenue)'} }, scales: { y: { beginAtZero: true } } }
+            });
+
+            if(batchLineChartInstance) batchLineChartInstance.destroy();
+            batchLineChartInstance = new Chart(document.getElementById('batchLineChart'), {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [
+                        { label: 'මුළු ආදායම (Total Income)', data: chartIn, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true, tension: 0.3 },
+                        { label: 'මුළු වියදම (Total Expense)', data: chartOut, borderColor: '#dc2626', backgroundColor: 'rgba(220, 38, 38, 0.1)', fill: true, tension: 0.3 },
+                        { label: 'ලාභය / ශේෂය (Profit / Net Cash)', data: chartProfit, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.3 }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { title: { display: true, text: 'කාණ්ඩ අනුව ආදායම්/වියදම් සහ ලාභ රටාව (Batch Trends over Time)' } },
+                    scales: { y: { beginAtZero: true } }
+                }
             });
         }, 50);
     }
@@ -1298,6 +1368,55 @@
         reader.readAsText(f.files[0]);
     }
     function resetData() { if(confirm("අවවාදයයි! සියලුම දත්ත මැකී යනු ඇත. විශ්වාසද?")) { if(confirm("ඔබට 100% විශ්වාසද?")) { localStorage.removeItem('mush_data_v10'); location.reload(); } } }
+</script>
+
+<!-- FIREBASE AUTHENTICATION SCRIPT -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCy11loO6ZTeSh8U15pjrHqJz54qc0d1D4",
+        authDomain: "lunamushroom.firebaseapp.com",
+        projectId: "lunamushroom",
+        storageBucket: "lunamushroom.firebasestorage.app",
+        messagingSenderId: "124856562451",
+        appId: "1:124856562451:web:406f9b83563b5d83df60e6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.attemptLogin = function() {
+        const email = document.getElementById('loginEmail').value;
+        const pass = document.getElementById('loginPass').value;
+        const err = document.getElementById('loginError');
+
+        // Security check - Allow only specific email
+        if(email.toLowerCase() !== "tharindum2022@gmail.com") {
+            err.innerText = "මෙම Email එකට පද්ධතියට ඇතුළු විය නොහැක! (Access Denied)";
+            err.style.display = "block";
+            return;
+        }
+
+        err.style.display = "none";
+        signInWithEmailAndPassword(auth, email, pass)
+            .then((userCredential) => {
+                document.getElementById('loginOverlay').style.display = 'none';
+            })
+            .catch((error) => {
+                err.innerText = "Email හෝ Password වැරදියි!";
+                err.style.display = "block";
+            });
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user && user.email === "tharindum2022@gmail.com") {
+            document.getElementById('loginOverlay').style.display = 'none';
+        } else {
+            document.getElementById('loginOverlay').style.display = 'flex';
+        }
+    });
 </script>
 
 </body>
