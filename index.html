@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUNA FOOD - ERP System V10.5 (Stable)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1e3a8a; 
+            --primary-light: #3b82f6; 
+            --bg: #f3f4f6;
+            --white: #ffffff; 
+            --text: #1f2937; 
+            --border: #d1d5db;
+            --danger: #dc2626; 
+            --warning: #f59e0b; 
+            --info: #0ea5e9;
+            --success: #16a34a;
+            --excel: #10b981;
+        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); margin: 0; padding: 0; font-size: 14px; }
+        .header { background-color: var(--primary); color: var(--white); padding: 15px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .container { max-width: 1350px; margin: 20px auto; background: var(--white); padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        
+        .global-filter { background:#eef2ff; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c7d2fe; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
+        
+        .tabs { display: flex; flex-wrap: wrap; border-bottom: 2px solid var(--primary); margin-bottom: 20px; gap: 2px; }
+        .tab-btn { background: #e5e7eb; border: none; padding: 10px 15px; font-weight: bold; cursor: pointer; color: var(--text); border-radius: 5px 5px 0 0; transition: 0.2s;}
+        .tab-btn:hover { background-color: #d1d5db; }
+        .tab-btn.active { background-color: var(--primary); color: var(--white); }
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 5px; font-weight: 600; font-size: 13px; color: #4b5563;}
+        input, select, textarea { padding: 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 14px; width: 100%; }
+        input:focus, select:focus { border-color: var(--primary-light); outline: none; }
+        
+        .btn { background-color: var(--primary-light); color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin: 2px; transition: 0.2s;}
+        .btn:hover { filter: brightness(90%); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-danger { background-color: var(--danger); }
+        .btn-warning { background-color: var(--warning); color: #fff; }
+        .btn-info { background-color: var(--info); }
+        .btn-success { background-color: var(--success); }
+        .btn-excel { background-color: var(--excel); color: #fff; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 5px;}
+        
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+        th, td { border: 1px solid var(--border); padding: 8px; text-align: left; }
+        th { background-color: var(--primary); color: white; text-align: center; font-weight: 600; }
+        tr:nth-child(even) { background-color: #f9fafb; }
+        tr:hover { background-color: #f3f4f6; }
+        tfoot tr { background-color: #e5e7eb; font-weight: bold; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        
+        .summary-card { background: #eff6ff; padding: 15px; border-radius: 5px; margin-bottom: 15px; font-weight: bold; border-left: 5px solid var(--primary-light); display: flex; flex-direction: column; justify-content: center;}
+        .summary-danger { background: #fef2f2; border-left-color: var(--danger); }
+        .summary-warn { background: #fffbeb; border-left-color: var(--warning); }
+        .summary-success { background: #f0fdf4; border-left-color: var(--success); }
+        
+        .pagination-container { display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:5px; font-size:13px; flex-wrap:wrap; gap:10px; }
+        
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index: 1000;}
+        .modal-content { background:white; padding:25px; border-radius:8px; width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);}
+        .modal-header { font-size: 18px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; color: var(--primary);}
+        .price-note { font-size: 11px; color: var(--danger); margin-top: 4px; font-weight: 600;}
+        .date-link { color: var(--primary-light); text-decoration: underline; cursor: pointer; font-weight: bold; }
+        .date-link:hover { color: var(--primary); }
+
+        @media print {
+            body { background: #fff; color: #000; }
+            .header, .tabs, .btn, .global-filter, .pagination-container { display: none !important; }
+            .container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; border: none; }
+            .tab-content { display: none !important; }
+            .tab-content.active { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>LUNA FOOD - ERP Management System V10.5</h1>
+</div>
+
+<div class="container">
+    
+    <!-- GLOBAL FILTER -->
+    <div class="global-filter">
+        <strong style="color:var(--primary); font-size:15px; margin-right:10px;">🌍 පද්ධති පාලකය (Global Sync):</strong>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <label style="font-weight:bold; font-size:13px; margin:0;">වර්ෂය:</label>
+            <select id="globalYear" onchange="updateGlobalBatches()" style="padding:5px; width:150px; font-weight:bold;"></select>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <label style="font-weight:bold; font-size:13px; margin:0;">කාණ්ඩය:</label>
+            <select id="globalBatch" onchange="applyGlobalFilter()" style="padding:5px; width:150px;">
+                <option value="">All Batches (සියලුම)</option>
+            </select>
+        </div>
+        <div style="font-size: 11.5px; color: #475569; max-width: 400px; line-height: 1.4; font-weight:600;">
+            මෙතැනින් තෝරන Year / Batch එක මුළු පද්ධතියටම එකවර අදාළ වේ. (තෝරා නැත / None දැමූ විට Manual Date භාවිතා කළ හැක).
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('RegTab')">ලියාපදිංචිය (Reg)</button>
+        <button class="tab-btn" onclick="openTab('EntryTab')">දෛනික දත්ත (Entry)</button>
+        <button class="tab-btn" onclick="openTab('LedgerTab')">ගිණුම් වාර්තා (Ledger)</button>
+        <button class="tab-btn" onclick="openTab('ReturnTab')">ප්‍රතික්ෂේපිත (Returns)</button>
+        <button class="tab-btn" onclick="openTab('MonthTab')">දෛනික එකතුව (Day-by-Day)</button>
+        <button class="tab-btn" onclick="openTab('ExpenseTab')">වියදම් (Expenses)</button>
+        <button class="tab-btn" onclick="openTab('ReportTab')">ERP Reports</button>
+        <button class="tab-btn" onclick="openTab('NotesTab')">සටහන් (Reminders)</button>
+        <button class="tab-btn" onclick="openTab('SettingsTab')">සැකසුම් (Settings)</button>
+    </div>
+
+    <!-- 1. Reg Tab -->
+    <div id="RegTab" class="tab-content active">
+        <h2>නව ලියාපදිංචිය (Shops & Suppliers)</h2>
+        <input type="hidden" id="editPartyId">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>වර්ගය (Type)</label>
+                <select id="partyType">
+                    <option value="shop">කඩය (Shop / Customer)</option>
+                    <option value="supplier">සැපයුම්කරු (Supplier)</option>
+                </select>
+            </div>
+            <div class="form-group"><label>නම (Name) *</label><input type="text" id="partyName" placeholder="උදා: සිරිසඳ ස්ටෝර්ස්"></div>
+            <div class="form-group"><label>දුරකථන (Mobile)</label><input type="text" id="partyMobile"></div>
+        </div>
+        <button class="btn btn-success" id="btnSaveParty" onclick="saveParty()">ලියාපදිංචි කරන්න (Register)</button>
+        <button class="btn btn-danger" id="btnCancelParty" style="display:none;" onclick="resetPartyForm()">අවලංගු කරන්න (Cancel)</button>
+        <hr style="border:0; border-top:1px solid #e5e7eb; margin: 20px 0;">
+        <table id="partyTable">
+            <thead><tr><th>නම (Name)</th><th>වර්ගය (Type)</th><th>දුරකථන (Mobile)</th><th>Action</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- 2. Entry Tab -->
+    <div id="EntryTab" class="tab-content">
+        <h2 id="entryTitle">දෛනික දත්ත ඇතුලත් කිරීම (Add / Edit Entry)</h2>
+        <input type="hidden" id="editTransId">
+        <div class="form-grid">
+            <div class="form-group"><label>දිනය (Date)</label><input type="date" id="entryDate"></div>
+            <div class="form-group"><label>වර්ෂය (Year)</label><select id="entryYear"></select></div>
+            <div class="form-group">
+                <label>කාණ්ඩය (Batch Number)</label>
+                <input type="text" id="entryBatchList" list="batchOptions" placeholder="උදා: Batch 01">
+                <datalist id="batchOptions">
+                    <option value="Batch 01"><option value="Batch 02"><option value="Batch 03">
+                    <option value="Batch 04"><option value="Batch 05"><option value="Batch 06">
+                </datalist>
+            </div>
+            <div class="form-group"><label>පාර්ශවය (Party)</label><select id="entryParty" onchange="loadPartyPrices()"></select></div>
+        </div>
+        <div class="summary-card" id="entryTypeBanner">විකුණුම් දත්ත (Sales Entry)</div>
+        <div style="overflow-x:auto;">
+            <table>
+                <thead><tr><th>වර්ගය (Type)</th><th>ප්‍රමාණය (Qty)</th><th>මිල (Unit Price)</th><th>එකතුව (Total Rs)</th></tr></thead>
+                <tbody id="entryItemsBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <td class="text-right">Total:</td>
+                        <td id="entryTotalQty" class="text-center">0</td>
+                        <td></td>
+                        <td id="entryTotalSaleFoot" class="text-right">0.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="form-grid" style="margin-top:15px; background: #fffbeb; padding:15px; border-radius:5px; border: 1px solid #fde68a;">
+            <div class="form-group"><label>මුළු වටිනාකම (Total Value)</label><input type="number" id="entryTotalSale" readonly style="font-weight:bold; font-size: 16px; color: var(--primary);"></div>
+            <div class="form-group"><label>ගෙවූ/ලැබුණු මුදල (Payment)</label><input type="number" id="entryPayment" value="0" oninput="calcEntry()"></div>
+            <div class="form-group"><label>ශේෂය (Balance)</label><input type="number" id="entryBalance" readonly style="font-weight:bold;"></div>
+        </div>
+        <div style="margin-top:10px;">
+            <button class="btn btn-success" id="saveEntryBtn" onclick="saveEntry()">දත්ත සුරකින්න (Save Entry)</button>
+            <button class="btn btn-danger" id="cancelEditBtn" style="display:none;" onclick="resetEntryForm()">අවලංගු කරන්න (Cancel Edit)</button>
+        </div>
+    </div>
+
+    <!-- 3. Ledger Tab -->
+    <div id="LedgerTab" class="tab-content">
+        <h2>ගිණුම් වාර්තා (Party Ledger)</h2>
+        <div class="form-grid" style="background: #f9fafb; padding: 15px; border-radius: 5px; border: 1px solid #e5e7eb;">
+            <div class="form-group"><label>වර්ෂය (Year)</label><select id="ledgerYearF" onchange="autoSetDates('ledger')"></select></div>
+            <div class="form-group">
+                <label>කාණ්ඩය (Batch Filter)</label>
+                <select id="ledgerBatchF" onchange="autoSetDates('ledger')">
+                    <option value="">All (සියලුම)</option><option value="Batch 01">Batch 01</option><option value="Batch 02">Batch 02</option><option value="Batch 03">Batch 03</option><option value="Batch 04">Batch 04</option>
+                </select>
+            </div>
+            <div class="form-group"><label>පාර්ශවය (Select Party)</label><select id="ledgerParty" onchange="renderLedger()"></select></div>
+            <div class="form-group"><label>Start Date</label><input type="date" id="ledgerStartDate" onchange="renderLedger()"></div>
+            <div class="form-group"><label>End Date</label><input type="date" id="ledgerEndDate" onchange="renderLedger()"></div>
+            <div class="form-group" style="justify-content: flex-end;"><button class="btn btn-info" onclick="openBulkPayModal()">එකවර ගෙවීම (Bulk Pay)</button></div>
+        </div>
+        <div class="summary-card" id="ledgerSummary">Total Due: Rs. 0.00</div>
+        
+        <button class="btn btn-excel" onclick="exportTableToCSV('ledgerTable', 'Ledger_Report.csv')">📥 Export to Excel</button>
+        <button class="btn btn-danger btn-pdf" onclick="window.print()">📄 Download PDF</button>
+        
+        <div style="overflow-x:auto;">
+            <table id="ledgerTable">
+                <thead><tr><th>Date & Batch</th><th>Party Name</th><th>Items (Qty@Price)</th><th>Orig. Value</th><th>Returned</th><th>Net Sale</th><th>Paid</th><th>Due Balance</th><th class="text-center">Action</th></tr></thead>
+                <tbody></tbody>
+                <tfoot id="ledgerFoot"></tfoot>
+            </table>
+        </div>
+        <div id="ledgerPagination"></div>
+    </div>
+
+    <!-- 4. Returns Tab -->
+    <div id="ReturnTab" class="tab-content">
+        <h2>ප්‍රතික්ෂේපිත වාර්තා (Returns History)</h2>
+        <div class="form-grid" style="background: #fef2f2; padding: 15px; border-radius: 5px; border: 1px solid #fecaca; margin-bottom:15px;">
+            <div class="form-group"><label>වර්ෂය (Year)</label><select id="retYearF" onchange="autoSetDates('ret')"></select></div>
+            <div class="form-group">
+                <label>කාණ්ඩය (Batch Filter)</label>
+                <select id="retBatchF" onchange="autoSetDates('ret')">
+                    <option value="">All (සියලුම)</option><option value="Batch 01">Batch 01</option><option value="Batch 02">Batch 02</option><option value="Batch 03">Batch 03</option><option value="Batch 04">Batch 04</option>
+                </select>
+            </div>
+            <div class="form-group"><label>පාර්ශවය (Select Party)</label><select id="retParty" onchange="renderReturns()"></select></div>
+            <div class="form-group"><label>Start Date</label><input type="date" id="retStartDate" onchange="renderReturns()"></div>
+            <div class="form-group"><label>End Date</label><input type="date" id="retEndDate" onchange="renderReturns()"></div>
+        </div>
+
+        <div class="summary-card summary-danger" id="returnSummary">Total Returns Loss: Rs. 0.00</div>
+        <button class="btn btn-excel" onclick="exportTableToCSV('returnTable', 'Returns_Report.csv')">📥 Export to Excel</button>
+        <button class="btn btn-danger btn-pdf" onclick="window.print()">📄 Download PDF</button>
+        <div style="overflow-x:auto;">
+            <table id="returnTable">
+                <thead><tr><th>Return Date</th><th>Shop / Party</th><th>Original Bill Date</th><th>Batch</th><th>Item</th><th>Returned Qty</th><th>Loss (Rs)</th></tr></thead>
+                <tbody></tbody>
+                <tfoot id="returnFoot"></tfoot>
+            </table>
+        </div>
+        <div id="retPagination"></div>
+    </div>
+
+    <!-- 5. Month Tab -->
+    <div id="MonthTab" class="tab-content">
+        <h2>දෛනික මුදල් හා අලෙවි සාරාංශය (Day-by-Day View)</h2>
+        <div class="form-grid" style="background: #f9fafb; padding: 15px; border-radius: 5px;">
+            <div class="form-group"><label>Year</label><select id="mYearF" onchange="autoSetDates('m')"></select></div>
+            <div class="form-group">
+                <label>Batch</label>
+                <select id="mBatchF" onchange="autoSetDates('m')">
+                    <option value="">All</option><option value="Batch 01">Batch 01</option><option value="Batch 02">Batch 02</option><option value="Batch 03">Batch 03</option>
+                </select>
+            </div>
+            <div class="form-group"><label>පාර්ශවය (Party Filter)</label><select id="mParty" onchange="renderMonth()"></select></div>
+            <div class="form-group"><label>Start Date</label><input type="date" id="mStartDate" onchange="renderMonth()"></div>
+            <div class="form-group"><label>End Date</label><input type="date" id="mEndDate" onchange="renderMonth()"></div>
+        </div>
+        
+        <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));" id="monthSummaryCards">
+            <!-- Rendered by JS -->
+        </div>
+        
+        <button class="btn btn-excel" onclick="exportTableToCSV('monthTable', 'Daily_Summary.csv')">📥 Export to Excel</button>
+        <button class="btn btn-danger btn-pdf" onclick="window.print()">📄 Download PDF</button>
+        
+        <div style="overflow-x:auto;">
+            <table id="monthTable">
+                <thead><tr>
+                    <th>දිනය (Date)</th><th>Oyster</th><th>Abalone</th><th>Milki</th><th>Dry</th><th>Other</th><th>Ret Qty</th>
+                    <th>අලෙවිය (Sales)</th><th>ලැබීම් (Cash In)</th><th>හිඟ මුදල (Due)</th><th>මිලදීගැනීම් (Pur.)</th><th>සැපයුම් ගෙවීම් (Pay)</th><th>වියදම් (Exp)</th>
+                </tr></thead>
+                <tbody></tbody>
+                <tfoot id="monthFoot"></tfoot>
+            </table>
+        </div>
+        <div id="mPagination"></div>
+    </div>
+
+    <!-- 6. Expense Tab -->
+    <div id="ExpenseTab" class="tab-content">
+        <h2>වියදම් කළමනාකරණය (Expenses)</h2>
+        
+        <div class="form-grid" style="background:#f1f5f9; padding:15px; border-radius:5px; margin-bottom:15px; border:1px solid #cbd5e1;">
+            <div class="form-group"><label>පෙරහන: වර්ෂය (Filter Year)</label><select id="expYearF" onchange="renderExpenses()"></select></div>
+            <div class="form-group">
+                <label>පෙරහන: කාණ්ඩය (Filter Batch)</label>
+                <select id="expBatchF" onchange="renderExpenses()">
+                    <option value="">All (සියලුම)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-grid" style="background:#eff6ff; padding:15px; border-radius:5px; border:1px solid #bfdbfe;">
+            <input type="hidden" id="editExpId">
+            <div class="form-group"><label>දිනය (Date)</label><input type="date" id="expDate"></div>
+            <div class="form-group"><label>වර්ෂය (Year)</label><select id="expYear"></select></div>
+            <div class="form-group">
+                <label>කාණ්ඩය (Batch Number)</label>
+                <input type="text" id="expBatchList" list="batchOptions" placeholder="උදා: Batch 01">
+            </div>
+            <div class="form-group"><label>විස්තරය (Item)</label><input type="text" id="expItem" placeholder="වියදම් විස්තරය"></div>
+            <div class="form-group"><label>ඒකක මිල (Rate)</label><input type="number" id="expRate" value="0" oninput="calcExp()"></div>
+            <div class="form-group"><label>ප්‍රමාණය (Qty)</label><input type="number" id="expQty" value="1" oninput="calcExp()"></div>
+            <div class="form-group"><label>එකතුව (Total)</label><input type="number" id="expTotal" readonly style="font-weight:bold;"></div>
+            <div class="form-group" style="justify-content: flex-end;">
+                <button class="btn btn-warning" id="btnSaveExp" style="color:#000;" onclick="saveExpense()">වියදම සුරකින්න</button>
+                <button class="btn btn-danger" id="cancelExpBtn" style="display:none;" onclick="resetExpForm()">අවලංගු කරන්න</button>
+            </div>
+        </div>
+
+        <button class="btn btn-excel" onclick="exportTableToCSV('expenseTable', 'Expenses_Report.csv')">📥 Export to Excel</button>
+        <button class="btn btn-danger btn-pdf" onclick="window.print()">📄 Download PDF</button>
+        <div style="overflow-x:auto;">
+            <table id="expenseTable">
+                <thead><tr><th>Date</th><th>Batch</th><th>Description</th><th>Rate</th><th>Qty</th><th>Total (Rs)</th><th>Action</th></tr></thead>
+                <tbody></tbody>
+                <tfoot id="expenseFoot"></tfoot>
+            </table>
+        </div>
+        <div id="expPagination"></div>
+    </div>
+
+    <!-- 7. Report Tab -->
+    <div id="ReportTab" class="tab-content">
+        <h2>ERP ගිණුම් සාරාංශය (Account & Batch Reports)</h2>
+        <div class="form-grid" style="background: #f9fafb; padding: 15px; border-radius: 5px;">
+            <div class="form-group"><label>Year</label><select id="repYearF" onchange="autoSetDates('rep')"></select></div>
+            <div class="form-group">
+                <label>Batch</label>
+                <select id="repBatchF" onchange="autoSetDates('rep')">
+                    <option value="">All</option><option value="Batch 01">Batch 01</option><option value="Batch 02">Batch 02</option><option value="Batch 03">Batch 03</option>
+                </select>
+            </div>
+            <div class="form-group"><label>පාර්ශවය (Party Filter)</label><select id="repParty" onchange="renderReports()"></select></div>
+            <div class="form-group"><label>Start Date</label><input type="date" id="repStartDate" onchange="renderReports()"></div>
+            <div class="form-group"><label>End Date</label><input type="date" id="repEndDate" onchange="renderReports()"></div>
+        </div>
+        
+        <button class="btn btn-danger btn-pdf" onclick="window.print()" style="margin-bottom:15px;">📄 Export Full Report to PDF</button>
+
+        <!-- Fixed Layout for 4 Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <div class="summary-card summary-success text-center" style="margin-bottom:0;">
+                <h3 style="margin-top:0; font-size:16px;">මුළු ලැබීම් (Cash In)</h3>
+                <p style="font-size:12px; margin:0; color:#555;">කඩවලින් එකතු වූ මුදල්</p>
+                <h2 id="repIncome" style="color:#16a34a; margin-top:10px; font-size:24px;">Rs. 0.00</h2>
+            </div>
+            <div class="summary-card summary-danger text-center" style="margin-bottom:0;">
+                <h3 style="margin-top:0; font-size:16px;">සැපයුම් ගෙවීම් + වියදම්</h3>
+                <p style="font-size:12px; margin:0; color:#555;">Cash Out (Outflow)</p>
+                <h2 id="repExpense" style="color:#dc2626; margin-top:10px; font-size:24px;">Rs. 0.00</h2>
+                <div id="repExpenseBreakdown" style="font-size:11px; font-weight:normal; color:#7f1d1d; margin-top:4px;"></div>
+            </div>
+            <div class="summary-card summary-info text-center" style="margin-bottom:0;">
+                <h3 style="margin-top:0; font-size:16px;">ලැබිය යුතු මුදල (Due)</h3>
+                <p style="font-size:12px; margin:0; color:#555;">කඩවලින් එකතු වීමට ඇති</p>
+                <h2 id="repDue" style="color:#0ea5e9; margin-top:10px; font-size:24px;">Rs. 0.00</h2>
+            </div>
+            <div class="summary-card summary-warn text-center" style="margin-bottom:0;">
+                <h3 style="margin-top:0; font-size:16px;">අතෙහි ඉතිරිය (Net Cash)</h3>
+                <p style="font-size:12px; margin:0; color:#555;">Cash In - Cash Out</p>
+                <h2 id="repNet" style="color:#b45309; margin-top:10px; font-size:24px;">Rs. 0.00</h2>
+            </div>
+        </div>
+        
+        <h3 style="color:var(--primary); margin-top:10px;">විස්තරාත්මක වාර්තාව (Detailed Party Performance)</h3>
+        <button class="btn btn-excel" onclick="exportTableToCSV('reportPartyTable', 'Party_Performance.csv')">📥 Export Party Table to Excel</button>
+        <div style="overflow-x:auto;">
+            <table id="reportPartyTable">
+                <thead>
+                    <tr><th>Party Name</th><th>Type</th><th>Delivered (Qty)</th><th>Returns (Qty)</th><th>Net (Qty)</th><th>Gross Value (Rs)</th><th>Net Value (Rs)</th><th>Collected/Paid (Rs)</th><th>Due Amount (Rs)</th></tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot id="reportPartyFoot"></tfoot>
+            </table>
+        </div>
+        <div id="repPartyPagination"></div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(45%, 1fr)); gap: 20px; margin-top:25px; align-items: start;">
+            <!-- Sales Table -->
+            <div style="overflow-x:auto; background:#fff; padding:15px; border-radius:5px; border:1px solid #e5e7eb;">
+                <h3 style="color:var(--primary); margin-top:0;">හතු වර්ග අනුව අලෙවිය <br><small style="color:#6b7280; font-size:12px;">(Shop Sales Only)</small></h3>
+                <button class="btn btn-excel" onclick="exportTableToCSV('reportTypeTable', 'Sales_Types.csv')" style="font-size:11px;">📥 Export</button>
+                <table id="reportTypeTable">
+                    <thead><tr><th>Mushroom Type</th><th>Net Sold Qty</th><th>Net Revenue (Rs)</th></tr></thead>
+                    <tbody></tbody>
+                    <tfoot id="reportTypeFoot"></tfoot>
+                </table>
+            </div>
+
+            <!-- Purchases Table -->
+            <div style="overflow-x:auto; background:#fff; padding:15px; border-radius:5px; border:1px solid #e5e7eb;">
+                <h3 style="color:var(--danger); margin-top:0;">හතු වර්ග අනුව මිලදීගැනීම් <br><small style="color:#6b7280; font-size:12px;">(Supplier Purchases Only)</small></h3>
+                <button class="btn btn-excel" onclick="exportTableToCSV('reportPurTypeTable', 'Purchase_Types.csv')" style="font-size:11px; background-color:var(--danger);">📥 Export</button>
+                <table id="reportPurTypeTable">
+                    <thead><tr><th>Mushroom Type</th><th>Net Bought Qty</th><th>Net Cost (Rs)</th></tr></thead>
+                    <tbody></tbody>
+                    <tfoot id="reportPurTypeFoot"></tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-top:30px;">
+            <div style="background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); position:relative; min-height: 450px;">
+                <canvas id="pieChart"></canvas>
+            </div>
+            <div style="background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); position:relative; min-height: 450px;">
+                <canvas id="shopChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Notes Tab -->
+    <div id="NotesTab" class="tab-content">
+        <h2>දිනපොත සහ සිහිකැඳවීම් (Note Book & Reminders)</h2>
+        <div class="form-grid" style="background:#fefce8; padding:15px; border-radius:5px; border:1px solid #fef08a;">
+            <div class="form-group"><label>දිනය (Date)</label><input type="date" id="noteDate"></div>
+            <div class="form-group" style="grid-column: span 2;"><label>සටහන (Note / Message)</label><input type="text" id="noteText" placeholder="සටහන මෙහි ලියන්න..."></div>
+            <div class="form-group"><label>Alarm (Notification)</label><select id="noteAlarm"><option value="on">On (ඔව්)</option><option value="off">Off (නැත)</option></select></div>
+            <div class="form-group" style="justify-content: flex-end;"><button class="btn btn-warning" style="color:#000;" onclick="saveNote()">Save Note</button></div>
+        </div>
+        <table id="notesTable">
+            <thead><tr><th>Date</th><th>Note / Message</th><th>Alarm Status</th><th class="text-center">Action</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- 9. Settings Tab -->
+    <div id="SettingsTab" class="tab-content">
+        <h2>සැකසුම් (Data Backup & Restore)</h2>
+        <div class="summary-card">මෙමගින් ඔබගේ දත්ත දුරකථනයට හෝ පරිගණකයට සුරක්ෂිතව බාගත කරගත හැක.</div>
+        <div style="margin-bottom:20px; border:1px solid #e5e7eb; padding:20px; border-radius:5px; background: #fff;">
+            <h3>1. Backup JSON Data (දත්ත ලබාගැනීම)</h3><button class="btn btn-info" onclick="exportData()">Download System Backup</button>
+        </div>
+        <div style="margin-bottom:20px; border:1px solid #e5e7eb; padding:20px; border-radius:5px; background: #fff;">
+            <h3>2. Restore Data (දත්ත නැවත ඇතුලත් කිරීම)</h3>
+            <input type="file" id="importFile" accept=".json" style="margin-bottom:15px;"><br><button class="btn btn-warning" onclick="importData()">Restore System Data</button>
+        </div>
+        <div style="margin-bottom:20px; border:1px solid var(--danger); padding:20px; border-radius:5px; background:#fef2f2;">
+            <h3 style="color:var(--danger);">3. System Factory Reset (සියලු දත්ත මැකීම)</h3>
+            <button class="btn btn-danger" onclick="resetData()">Clear All Data (Hard Reset)</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<div id="payHistoryModal" class="modal"><div class="modal-content"><div class="modal-header">ගෙවීම් ඉතිහාසය (Payment History)</div><div id="payHistoryContainer"></div><div style="margin-top:15px; text-align:right;"><button class="btn" style="background:#6b7280; color:#fff;" onclick="closeModal('payHistoryModal')">Close</button></div></div></div>
+<div id="returnModal" class="modal"><div class="modal-content"><div class="modal-header">Return Items (ප්‍රතික්ෂේපිත / ආපසු)</div><input type="hidden" id="retTransId"><div class="form-group"><label>Return Date</label><input type="date" id="retActionDate"></div><div id="retItemsContainer" style="background:#f9fafb; padding:15px; border-radius:5px; border:1px solid #e5e7eb; margin-top:10px;"></div><div style="margin-top:20px; text-align:right;"><button class="btn btn-danger" onclick="closeModal('returnModal')">Cancel</button><button class="btn btn-success" onclick="confirmReturn()">Save Return</button></div></div></div>
+<div id="payModal" class="modal"><div class="modal-content"><div class="modal-header">Add Payment (තනි බිලකට ගෙවීම් එකතු කිරීම)</div><input type="hidden" id="payTransId"><div class="form-group"><label>Payment Date</label><input type="date" id="payActionDate"></div><div class="form-group"><label>Amount (Rs)</label><input type="number" id="payAmount" style="font-size:18px; font-weight:bold;"></div><div style="margin-top:20px; text-align:right;"><button class="btn btn-danger" onclick="closeModal('payModal')">Cancel</button><button class="btn btn-success" onclick="confirmPay()">Save Payment</button></div></div></div>
+<div id="bulkPayModal" class="modal"><div class="modal-content"><div class="modal-header">එකවර ගෙවීම (Bulk Payment)</div><div class="form-group"><label>Date</label><input type="date" id="bulkPayDate"></div><div class="form-group"><label>Total Amount (Rs)</label><input type="number" id="bulkPayAmount" style="font-size:18px; font-weight:bold; color:var(--success);"></div><div style="margin-top:20px; text-align:right;"><button class="btn btn-danger" onclick="closeModal('bulkPayModal')">Cancel</button><button class="btn btn-info" onclick="confirmBulkPay()">Apply Payment</button></div></div></div>
+<div id="reminderModal" class="modal"><div class="modal-content"><div class="modal-header" style="color:var(--warning);">🔔 අද දිනට අදාල සිහිකැඳවීම් (Today's Reminders)</div><div id="reminderItems"></div><div style="margin-top:20px; text-align:right;"><button class="btn btn-warning" onclick="closeModal('reminderModal')">Close</button></div></div></div>
+
+<script>
+    // --- ERP System State V10.5 ---
+    let data = JSON.parse(localStorage.getItem('mush_data_v10')) || 
+               JSON.parse(localStorage.getItem('mush_data_v9')) || 
+               JSON.parse(localStorage.getItem('mush_data_v8')) || 
+               { parties: [], partyPrices: {}, transactions: [], expenses: [], returns: [], notes: [] };
+    
+    if (!data.partyPrices) data.partyPrices = {};
+    if (!data.notes) data.notes = [];
+    const itemTypes = ['Oyster', 'Abalone', 'Milki', 'Dry', 'Other'];
+    let shopChartInstance = null; let pieChartInstance = null;
+
+    // --- Pagination State ---
+    let pg = {
+        ledger: { p: 1, s: 30 },
+        ret: { p: 1, s: 30 },
+        m: { p: 1, s: 30 },
+        exp: { p: 1, s: 30 },
+        repParty: { p: 1, s: 30 }
+    };
+
+    // --- Date Format Helper ---
+    function getLocalYYYYMMDD(dateObj) {
+        let y = dateObj.getFullYear();
+        let m = String(dateObj.getMonth() + 1).padStart(2, '0');
+        let d = String(dateObj.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    // --- Init ---
+    let todayObj = new Date();
+    let todayStr = getLocalYYYYMMDD(todayObj);
+    
+    let past30Obj = new Date(); 
+    past30Obj.setDate(past30Obj.getDate() - 30);
+    let past30Str = getLocalYYYYMMDD(past30Obj);
+
+    document.getElementById('entryDate').value = todayStr;
+    document.getElementById('expDate').value = todayStr;
+    document.getElementById('retActionDate').value = todayStr;
+    document.getElementById('payActionDate').value = todayStr;
+    document.getElementById('bulkPayDate').value = todayStr;
+    document.getElementById('noteDate').value = todayStr;
+    
+    ['ledger', 'm', 'rep', 'ret'].forEach(prefix => {
+        if(document.getElementById(prefix+'StartDate')) document.getElementById(prefix+'StartDate').value = past30Str;
+        if(document.getElementById(prefix+'EndDate')) document.getElementById(prefix+'EndDate').value = todayStr;
+    });
+    
+    initYears(); updateDropdowns(); renderParties(); buildEntryTable(); checkReminders();
+    updateGlobalBatches(false); 
+
+    function initYears() {
+        let yArr = ['globalYear', 'entryYear', 'ledgerYearF', 'mYearF', 'repYearF', 'retYearF', 'expYear', 'expYearF'];
+        let curY = new Date().getFullYear();
+        let opts = '';
+        for(let y = 2024; y <= 2045; y++) { opts += `<option value="${y}" ${y === curY ? 'selected' : ''}>${y}</option>`; }
+        yArr.forEach(id => {
+            let el = document.getElementById(id);
+            if(el) { 
+                if(id === 'globalYear') {
+                    el.innerHTML = '<option value="none" selected>-- තෝරා නැත (None) --</option>' + opts.replace(/selected/g, '');
+                }
+                else if(id === 'entryYear' || id === 'expYear') el.innerHTML = opts; 
+                else el.innerHTML = '<option value="">All Years (සියලුම)</option>' + opts; 
+            }
+        });
+    }
+
+    function saveData() { localStorage.setItem('mush_data_v10', JSON.stringify(data)); }
+
+    // --- GLOBAL FILTER LOGIC ---
+    function updateGlobalBatches(triggerApply = true) {
+        let y = document.getElementById('globalYear').value;
+        let gb = document.getElementById('globalBatch');
+        
+        if (y === 'none' || y === '') {
+            gb.innerHTML = '<option value="">All Batches (සියලුම)</option>';
+            gb.value = '';
+            gb.disabled = true; 
+        } else {
+            gb.disabled = false;
+            let batches = new Set();
+            data.transactions.forEach(t => {
+                if(t.batch && t.batch.startsWith(y + '-')) batches.add(t.batch.split('-').slice(1).join('-'));
+            });
+            data.expenses.forEach(e => {
+                if(e.batch && e.batch.startsWith(y + '-')) batches.add(e.batch.split('-').slice(1).join('-'));
+            });
+            
+            let currentVal = gb.value;
+            gb.innerHTML = '<option value="">All Batches (සියලුම)</option>';
+            Array.from(batches).sort().forEach(b => { gb.innerHTML += `<option value="${b}">${b}</option>`; });
+            
+            let exists = Array.from(gb.options).some(opt => opt.value === currentVal);
+            if(exists) gb.value = currentVal; else gb.value = '';
+        }
+
+        if(triggerApply) applyGlobalFilter();
+    }
+
+    function applyGlobalFilter() {
+        let gy = document.getElementById('globalYear').value;
+        let gb = document.getElementById('globalBatch').value;
+        
+        let localYears = ['entryYear', 'ledgerYearF', 'retYearF', 'mYearF', 'expYearF', 'repYearF', 'expYear'];
+        let localBatches = ['entryBatchList', 'ledgerBatchF', 'retBatchF', 'mBatchF', 'expBatchF', 'repBatchF', 'expBatchList'];
+        
+        if (gy === 'none' || gy === '') {
+            localYears.forEach(id => { 
+                let el = document.getElementById(id); 
+                if(el && id !== 'entryYear' && id !== 'expYear') el.value = '';
+            });
+            localBatches.forEach(id => { 
+                let el = document.getElementById(id); 
+                if(el && el.tagName === 'SELECT') el.value = '';
+                else if(el && el.tagName === 'INPUT') el.value = '';
+            });
+        } else {
+            localYears.forEach(id => { 
+                let el = document.getElementById(id); 
+                if(el) {
+                    if (id !== 'entryYear' && id !== 'expYear') el.value = gy;
+                    else el.value = gy;
+                } 
+            });
+            
+            localBatches.forEach(id => { 
+                let el = document.getElementById(id); 
+                if(el) {
+                    if(el.tagName === 'SELECT') {
+                        if (gb !== '') {
+                            let exists = Array.from(el.options).some(opt => opt.value === gb || opt.value === (gy+'-'+gb));
+                            if(!exists) {
+                                let opt = document.createElement('option'); opt.value = gb; opt.innerText = gb;
+                                el.appendChild(opt);
+                            }
+                        }
+                        el.value = gb;
+                    } else {
+                        el.value = gb;
+                    }
+                } 
+            });
+
+            // Force Date Auto-Set on all report tabs when global filter changes
+            ['ledger', 'ret', 'm', 'exp', 'rep'].forEach(prefix => {
+                autoSetDates(prefix);
+            });
+        }
+
+        // Trigger render for active tab
+        let activeTab = document.querySelector('.tab-content.active');
+        if(activeTab) {
+            let id = activeTab.id;
+            if(id === 'LedgerTab') renderLedger();
+            if(id === 'MonthTab') renderMonth();
+            if(id === 'ExpenseTab') renderExpenses();
+            if(id === 'ReportTab') renderReports();
+            if(id === 'ReturnTab') renderReturns();
+        }
+    }
+
+    function openTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+        
+        for(let k in pg) pg[k].p = 1;
+
+        if(tabId === 'LedgerTab') renderLedger();
+        if(tabId === 'MonthTab') renderMonth();
+        if(tabId === 'ExpenseTab') renderExpenses();
+        if(tabId === 'ReportTab') renderReports();
+        if(tabId === 'ReturnTab') renderReturns();
+        if(tabId === 'NotesTab') renderNotes();
+    }
+
+    function autoSetDates(tab) {
+        let prefix = tab === 'returnt' ? 'ret' : tab; 
+        if(prefix === 'report') prefix = 'rep';
+        if(prefix === 'ledger') prefix = 'ledger';
+        if(prefix === 'expenset') prefix = 'exp';
+
+        let yFEl = document.getElementById(prefix + 'YearF');
+        let bFEl = document.getElementById(prefix + 'BatchF');
+        if(!yFEl || !bFEl) return;
+        
+        let yF = yFEl.value;
+        let bF = bFEl.value;
+        if(!yF && !bF) return; 
+        
+        let dateStrings = [];
+        
+        data.transactions.forEach(t => {
+            if(t.batch && t.date) {
+                let match = true;
+                if(yF && !t.batch.startsWith(yF)) match = false;
+                if(bF && !t.batch.includes(bF)) match = false; 
+                if(match) dateStrings.push(t.date);
+            }
+        });
+        
+        data.expenses.forEach(e => {
+            if(e.batch && e.date) {
+                let match = true;
+                if(yF && !e.batch.startsWith(yF)) match = false;
+                if(bF && !e.batch.includes(bF)) match = false;
+                if(match) dateStrings.push(e.date);
+            }
+        });
+        
+        if(dateStrings.length > 0) {
+            // String sort logic completely fixes Timezone bugs
+            dateStrings.sort();
+            document.getElementById(prefix + 'StartDate').value = dateStrings[0];
+            document.getElementById(prefix + 'EndDate').value = dateStrings[dateStrings.length - 1];
+        }
+        
+        if(prefix === 'ledger') renderLedger(); 
+        if(prefix === 'm') renderMonth(); 
+        if(prefix === 'rep') renderReports();
+        if(prefix === 'ret') renderReturns();
+        if(prefix === 'exp') renderExpenses();
+    }
+
+    function buildPagination(total, page, limit, tab) {
+        if(total === 0) return '';
+        let totalPages = limit === 'all' ? 1 : Math.ceil(total / limit);
+        let html = `<div class="pagination-container">
+            <div>මුළු වාර්තා ගණන (Total): <strong style="color:var(--primary);">${total}</strong></div>
+            <div style="display:flex; gap:5px; align-items:center;">
+                <button class="btn" style="padding:4px 10px; background:#64748b;" onclick="changePage('${tab}', ${page-1})" ${page <= 1 ? 'disabled' : ''}>◄ පෙර පිටුව</button>
+                <span style="background:#fff; padding:4px 10px; border:1px solid #cbd5e1; border-radius:4px;">පිටුව <strong>${page}</strong> / <strong>${totalPages}</strong></span>
+                <button class="btn" style="padding:4px 10px; background:#64748b;" onclick="changePage('${tab}', ${page+1})" ${page >= totalPages ? 'disabled' : ''}>ඊළඟ පිටුව ►</button>
+            </div>
+            <div style="display:flex; align-items:center; gap:5px;">
+                Show: <select onchange="changeLimit('${tab}', this.value)" style="padding:4px; border-radius:3px; border:1px solid #cbd5e1;">
+                    <option value="30" ${limit===30?'selected':''}>30</option>
+                    <option value="50" ${limit===50?'selected':''}>50</option>
+                    <option value="100" ${limit===100?'selected':''}>100</option>
+                    <option value="all" ${limit==='all'?'selected':''}>All</option>
+                </select>
+            </div>
+        </div>`;
+        return html;
+    }
+    function changePage(tab, newPage) { pg[tab].p = newPage; triggerRender(tab); }
+    function changeLimit(tab, val) { pg[tab].s = val==='all'?'all':parseInt(val); pg[tab].p = 1; triggerRender(tab); }
+    function triggerRender(tab) {
+        if(tab === 'ledger') renderLedger();
+        if(tab === 'ret') renderReturns();
+        if(tab === 'm') renderMonth();
+        if(tab === 'exp') renderExpenses();
+        if(tab === 'repParty') renderReports();
+    }
+
+    function exportTableToCSV(tableID, filename) {
+        let csv = []; let table = document.getElementById(tableID);
+        let rows = table.querySelectorAll("tr");
+        for (let i = 0; i < rows.length; i++) {
+            let row = [], cols = rows[i].querySelectorAll("td, th");
+            for (let j = 0; j < cols.length; j++) {
+                if(cols[j].innerText !== "Action") {
+                    let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").replace(/"/g, '""');
+                    row.push('"' + data + '"');
+                }
+            }
+            csv.push(row.join(","));
+        }
+        let csvFile = new Blob(["\uFEFF"+csv.join("\n")], {type: "text/csv;charset=utf-8;"});
+        let dl = document.createElement("a"); dl.download = filename; dl.href = window.URL.createObjectURL(csvFile);
+        dl.style.display = "none"; document.body.appendChild(dl); dl.click(); document.body.removeChild(dl);
+    }
+
+    // --- 1. Reg Tab ---
+    function saveParty() {
+        let editId = document.getElementById('editPartyId').value; let name = document.getElementById('partyName').value.trim();
+        let mobile = document.getElementById('partyMobile').value.trim(); let type = document.getElementById('partyType').value;
+        if(!name) return alert("නම ඇතුලත් කරන්න!");
+        if(editId) { let p = data.parties.find(x => x.id === editId); if(p) { p.name = name; p.mobile = mobile; p.type = type; } } 
+        else {
+            let newParty = { id: Date.now().toString(), name, mobile, type }; data.parties.push(newParty);
+            if(!data.partyPrices[newParty.id]) data.partyPrices[newParty.id] = {};
+            itemTypes.forEach(t => { data.partyPrices[newParty.id][t] = { price: (t==='Dry'?200 : (t==='Other'?100:130)), date: 'N/A' }; });
+        }
+        saveData(); updateDropdowns(); renderParties(); resetPartyForm(); alert("සාර්ථකයි!");
+    }
+    function editParty(id) {
+        let p = data.parties.find(x => x.id === id); if(!p) return;
+        document.getElementById('editPartyId').value = p.id; document.getElementById('partyName').value = p.name;
+        document.getElementById('partyMobile').value = p.mobile || ''; document.getElementById('partyType').value = p.type;
+        document.getElementById('btnSaveParty').innerText = "Update"; document.getElementById('btnCancelParty').style.display = "inline-block"; window.scrollTo(0,0);
+    }
+    function resetPartyForm() {
+        document.getElementById('editPartyId').value = ''; document.getElementById('partyName').value = ''; document.getElementById('partyMobile').value = '';
+        document.getElementById('btnSaveParty').innerText = "Register"; document.getElementById('btnCancelParty').style.display = "none";
+    }
+    function renderParties() {
+        document.querySelector('#partyTable tbody').innerHTML = data.parties.map(p => `<tr><td><strong>${p.name}</strong></td><td><span style="background:#e5e7eb; padding:3px 8px; border-radius:12px; font-size:12px;">${p.type === 'shop' ? 'Shop' : 'Supplier'}</span></td><td>${p.mobile||'-'}</td><td class="text-center"><button class="btn btn-warning" style="padding:4px 8px;" onclick="editParty('${p.id}')">E</button><button class="btn btn-danger" style="padding:4px 8px;" onclick="delParty('${p.id}')">X</button></td></tr>`).join('');
+    }
+    function delParty(id) { if(confirm("මකන්න විශ්වාසද?")) { data.parties = data.parties.filter(x => x.id !== id); saveData(); updateDropdowns(); renderParties(); } }
+    
+    function updateDropdowns() {
+        let entryOpts = `<option value="">All / තෝරන්න...</option>` + data.parties.map(p => `<option value="${p.id}">${p.name} (${p.type})</option>`).join('');
+        if(document.getElementById('entryParty')) document.getElementById('entryParty').innerHTML = entryOpts; 
+        
+        let filterOpts = `<option value="">All / සියලුම</option>
+                          <option value="ALL_SHOPS">-- සියලුම කඩවල් (All Shops) --</option>
+                          <option value="ALL_SUPPLIERS">-- සියලුම සැපයුම්කරුවන් (All Suppliers) --</option>` + 
+                          data.parties.map(p => `<option value="${p.id}">${p.name} (${p.type})</option>`).join('');
+        
+        ['ledgerParty', 'retParty', 'mParty', 'repParty'].forEach(id => {
+            let el = document.getElementById(id);
+            if(el) el.innerHTML = filterOpts;
+        });
+    }
+
+    // --- 2. Entry Tab ---
+    function buildEntryTable() {
+        document.getElementById('entryItemsBody').innerHTML = itemTypes.map(t => `<tr><td style="font-weight:600;">${t}</td><td><input type="number" id="qty_${t}" min="0" oninput="calcEntry()"></td><td><input type="number" id="price_${t}" min="0" oninput="calcEntry()"><div id="note_${t}" class="price-note"></div></td><td><input type="number" id="tot_${t}" readonly tabindex="-1" style="background:#f9fafb; font-weight:bold;"></td></tr>`).join('');
+    }
+    function loadPartyPrices() {
+        let pid = document.getElementById('entryParty').value; if(!pid) return;
+        let p = data.parties.find(x => x.id === pid); if(!p) return;
+        document.getElementById('entryTypeBanner').innerText = p.type === 'shop' ? 'විකුණුම් දත්ත (Sales to Customer)' : 'මිලදීගැනීම් දත්ත (Purchases from Supplier)';
+        if(!data.partyPrices[pid]) data.partyPrices[pid] = { Oyster:{price:130,date:'N/A'}, Abalone:{price:130,date:'N/A'}, Milki:{price:130,date:'N/A'}, Dry:{price:200,date:'N/A'}, Other:{price:100,date:'N/A'} };
+        let prices = data.partyPrices[pid];
+        itemTypes.forEach(t => {
+            if(prices && prices[t]) { document.getElementById(`price_${t}`).value = prices[t].price; document.getElementById(`note_${t}`).innerText = "Last: " + prices[t].date; }
+        });
+        calcEntry();
+    }
+    function calcEntry() {
+        let tot = 0, totQty = 0;
+        itemTypes.forEach(t => {
+            let q = parseFloat(document.getElementById(`qty_${t}`).value) || 0; let p = parseFloat(document.getElementById(`price_${t}`).value) || 0;
+            document.getElementById(`tot_${t}`).value = (q*p).toFixed(2); tot += (q*p); totQty += q;
+        });
+        document.getElementById('entryTotalSale').value = tot.toFixed(2); document.getElementById('entryTotalQty').innerText = totQty; document.getElementById('entryTotalSaleFoot').innerText = tot.toFixed(2);
+        let pay = parseFloat(document.getElementById('entryPayment').value) || 0; document.getElementById('entryBalance').value = (tot - pay).toFixed(2);
+    }
+    function saveEntry() {
+        let editId = document.getElementById('editTransId').value; let pid = document.getElementById('entryParty').value;
+        let date = document.getElementById('entryDate').value; let year = document.getElementById('entryYear').value; let batchNo = document.getElementById('entryBatchList').value.trim();
+        let batchStr = batchNo ? year + "-" + batchNo : '';
+        if(!pid || !date || !batchNo) return alert("කරුණාකර දත්ත සම්පූර්ණ කරන්න!");
+        
+        let p = data.parties.find(x => x.id === pid); let origTot = 0, hasQty = false, transItems = {}, isValid = true;
+        itemTypes.forEach(t => {
+            let q = parseFloat(document.getElementById(`qty_${t}`).value) || 0; let pr = parseFloat(document.getElementById(`price_${t}`).value) || 0;
+            let existingRetQty = 0;
+            if(editId) { let existingT = data.transactions.find(x => x.id === editId); if(existingT && existingT.items[t]) existingRetQty = existingT.items[t].retQty || 0; }
+            if(q > 0) hasQty = true;
+            if(editId && q < existingRetQty) { alert(`Error: ${t} Return ප්‍රමාණය ${existingRetQty}ක් ඇත. එයට වඩා ප්‍රමාණය අඩු කළ නොහැක.`); isValid = false; }
+            transItems[t] = { qty: q, price: pr, retQty: existingRetQty }; origTot += (q * pr);
+            if(!editId && pr > 0 && (!data.partyPrices[pid][t] || data.partyPrices[pid][t].price !== pr)) { data.partyPrices[pid][t] = { price: pr, date: date }; }
+        });
+        if(!isValid) return;
+        let payAmt = parseFloat(document.getElementById('entryPayment').value) || 0; if(!hasQty && payAmt === 0) return alert("දත්ත ඇතුලත් කර නැත!");
+
+        if(editId) {
+            let tIdx = data.transactions.findIndex(x => x.id === editId);
+            if(tIdx > -1) {
+                let t = data.transactions[tIdx]; t.date = date; t.batch = batchStr; t.partyId = pid; t.type = p.type; t.items = transItems; t.totalOriginal = origTot;
+                let newNetSale = origTot; for(let k in t.items) { newNetSale -= (t.items[k].retQty * t.items[k].price); } t.totalSale = newNetSale; alert("දත්ත Update කරන ලදි!");
+            }
+        } else {
+            let trans = { id: Date.now().toString(), partyId: pid, type: p.type, date: date, batch: batchStr, items: transItems, payment: payAmt, payHistory: [] };
+            if(payAmt > 0) trans.payHistory.push({ date: date, amount: payAmt, type: 'Daily Entry' });
+            trans.totalOriginal = origTot; trans.totalSale = origTot; data.transactions.push(trans); alert("දත්ත සුරැකින ලදි!");
+        }
+        saveData(); resetEntryForm(); updateGlobalBatches(false);
+    }
+    function editTransaction(id) {
+        let t = data.transactions.find(x => x.id === id); if(!t) return;
+        document.getElementById('editTransId').value = t.id; document.getElementById('entryDate').value = t.date; document.getElementById('entryParty').value = t.partyId;
+        if(t.batch) { let parts = t.batch.split('-'); if(parts.length >= 2) { document.getElementById('entryYear').value = parts[0]; document.getElementById('entryBatchList').value = parts.slice(1).join('-'); } }
+        itemTypes.forEach(type => {
+            let itm = t.items[type]; document.getElementById(`qty_${type}`).value = itm && itm.qty ? itm.qty : ''; document.getElementById(`price_${type}`).value = itm && itm.price ? itm.price : '';
+        });
+        document.getElementById('entryPayment').value = 0; document.getElementById('entryPayment').readOnly = true; 
+        calcEntry(); document.getElementById('entryTitle').innerText = "දත්ත සංස්කරණය (Edit Entry)"; document.getElementById('saveEntryBtn').innerText = "Update Data"; document.getElementById('cancelEditBtn').style.display = "inline-block"; document.querySelectorAll('.tab-btn')[1].click();
+    }
+    function resetEntryForm() {
+        document.getElementById('editTransId').value = ''; document.getElementById('entryPayment').readOnly = false;
+        itemTypes.forEach(t => document.getElementById(`qty_${t}`).value = ''); document.getElementById('entryPayment').value = 0;
+        document.getElementById('entryTitle').innerText = "දෛනික දත්ත ඇතුලත් කිරීම (Add / Edit Entry)";
+        document.getElementById('saveEntryBtn').innerText = "දත්ත සුරකින්න (Save Entry)"; document.getElementById('cancelEditBtn').style.display = "none";
+        calcEntry(); loadPartyPrices();
+    }
+
+    // --- 3. Ledger Tab ---
+    function renderLedger() {
+        let pid = document.getElementById('ledgerParty').value; let sd = document.getElementById('ledgerStartDate').value; let ed = document.getElementById('ledgerEndDate').value;
+        let yF = document.getElementById('ledgerYearF').value; let bF = document.getElementById('ledgerBatchF').value;
+        
+        let pTrans = data.transactions.filter(t => {
+            if(pid === 'ALL_SHOPS' && t.type !== 'shop') return false;
+            if(pid === 'ALL_SUPPLIERS' && t.type !== 'supplier') return false;
+            if(pid && pid !== 'ALL_SHOPS' && pid !== 'ALL_SUPPLIERS' && t.partyId !== pid) return false;
+            if(sd && t.date < sd) return false; if(ed && t.date > ed) return false;
+            if(yF && t.batch && !t.batch.startsWith(yF)) return false; if(bF && t.batch && !t.batch.includes(bF)) return false; return true;
+        }).sort((a,b) => new Date(b.date) - new Date(a.date));
+
+        // Totals calculation
+        let fGross = 0, fRet = 0, fNet = 0, fPaid = 0, fDue = 0; let totalDue = 0;
+        let shopSums = { Oyster:0, Abalone:0, Milki:0, Dry:0, Other:0 };
+        let supSums = { Oyster:0, Abalone:0, Milki:0, Dry:0, Other:0 };
+
+        pTrans.forEach(t => {
+            let due = t.totalSale - t.payment;
+            fGross += t.totalOriginal; fRet += (t.totalOriginal - t.totalSale); fNet += t.totalSale; fPaid += t.payment; fDue += due;
+            if(t.type === 'shop') totalDue += due; else totalDue -= due; 
+            
+            for(let k in t.items) {
+                let netQ = t.items[k].qty - t.items[k].retQty;
+                if(t.type === 'shop') shopSums[k] += netQ; else supSums[k] += netQ;
+            }
+        });
+
+        let totalRecords = pTrans.length;
+        let limit = pg.ledger.s;
+        let page = pg.ledger.p;
+        let sliced = limit === 'all' ? pTrans : pTrans.slice((page-1)*limit, page*limit);
+
+        let html = '';
+        sliced.forEach(t => {
+            let p = data.parties.find(x => x.id === t.partyId); let due = t.totalSale - t.payment;
+            let itmStr = '', retStr = '';
+            for(let k in t.items) {
+                if(t.items[k].qty > 0) itmStr += `<span style="margin-right:8px; font-weight:600;">${k}:${t.items[k].qty}@${t.items[k].price}</span>`;
+                if(t.items[k].retQty > 0) retStr += `<span style="color:var(--danger); margin-right:8px; font-weight:bold;">${k} [Ret:${t.items[k].retQty}]</span>`;
+            }
+            html += `<tr><td><span class="date-link" onclick="viewPayHistory('${t.id}')">${t.date}</span><br><span style="font-size:11px; background:#e5e7eb; padding:2px 5px; border-radius:4px;">${t.batch||'No Batch'}</span></td><td><small style="color:#6b7280;">${p?p.name:'-'}</small></td><td>${itmStr}<br>${retStr}</td><td class="text-right" style="color:#6b7280;">${t.totalOriginal.toFixed(2)}</td><td class="text-right text-danger">${(t.totalOriginal - t.totalSale).toFixed(2)}</td><td class="text-right" style="font-weight:bold; color:var(--primary);">${t.totalSale.toFixed(2)}</td><td class="text-right" style="color:var(--success); font-weight:600;">${t.payment.toFixed(2)}</td><td class="text-right" style="color:${due>0?'var(--danger)':'#1f2937'}; font-weight:bold;">${due.toFixed(2)}</td><td class="text-center"><button class="btn btn-info" style="padding:4px 6px; font-size:12px;" onclick="editTransaction('${t.id}')">E</button> <button class="btn btn-warning" style="padding:4px 6px; font-size:12px;" onclick="openPayModal('${t.id}')">Pay</button> <button class="btn btn-danger" style="padding:4px 6px; font-size:12px;" onclick="openRetModal('${t.id}')">Ret</button> <button class="btn" style="padding:4px 6px; font-size:12px; background:#4b5563;" onclick="delTrans('${t.id}')">X</button></td></tr>`;
+        });
+        
+        document.querySelector('#ledgerTable tbody').innerHTML = html;
+        document.getElementById('ledgerFoot').innerHTML = `<tr><td colspan="3" class="text-right">Ledger Totals:</td><td class="text-right">${fGross.toFixed(2)}</td><td class="text-right text-danger">${fRet.toFixed(2)}</td><td class="text-right" style="color:var(--primary);">${fNet.toFixed(2)}</td><td class="text-right" style="color:var(--success);">${fPaid.toFixed(2)}</td><td class="text-right" style="color:var(--danger);">${fDue.toFixed(2)}</td><td></td></tr>`;
+        document.getElementById('ledgerPagination').innerHTML = buildPagination(totalRecords, page, limit, 'ledger');
+
+        let qtyHTML = '';
+        if(pid !== 'ALL_SUPPLIERS') qtyHTML += `<div style="font-size:12px; margin-top:5px;"><strong style="color:var(--primary);">Net Sold (Shops):</strong> Oyster: <b>${shopSums.Oyster}</b> | Abalone: <b>${shopSums.Abalone}</b> | Milki: <b>${shopSums.Milki}</b> | Dry: <b>${shopSums.Dry}</b> | Other: <b>${shopSums.Other}</b></div>`;
+        if(pid !== 'ALL_SHOPS') qtyHTML += `<div style="font-size:12px; margin-top:5px;"><strong style="color:var(--danger);">Net Bought (Suppliers):</strong> Oyster: <b>${supSums.Oyster}</b> | Abalone: <b>${supSums.Abalone}</b> | Milki: <b>${supSums.Milki}</b> | Dry: <b>${supSums.Dry}</b> | Other: <b>${supSums.Other}</b></div>`;
+
+        document.getElementById('ledgerSummary').innerHTML = `
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; align-items:center;">
+                <div>Filtered Net Due Balance: <span style="font-size:18px; color:var(--primary);">Rs. ${totalDue.toFixed(2)}</span></div>
+                <div style="background:#fff; padding:5px 10px; border-radius:5px; border:1px solid #e5e7eb; margin-top:5px; text-align:right;">
+                    ${qtyHTML}
+                </div>
+            </div>
+        `;
+    }
+    function delTrans(id) { if(confirm("මෙම වාර්තාව මකා දැමීමට අවශ්‍යද?")) { data.transactions = data.transactions.filter(x => x.id !== id); data.returns = data.returns.filter(x => x.transId !== id); saveData(); renderLedger(); renderReturns(); } }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function viewPayHistory(transId) {
+        let t = data.transactions.find(x => x.id === transId); let html = `<table style="width:100%; border-collapse:collapse; margin-top:10px;"><tr><th style="background:#e5e7eb; color:#1f2937;">Date</th><th style="background:#e5e7eb; color:#1f2937;">Type</th><th style="background:#e5e7eb; color:#1f2937;">Amount (Rs)</th></tr>`;
+        if(!t.payHistory || t.payHistory.length === 0) { html += `<tr><td colspan="3" class="text-center">No payment history.</td></tr>`; } else { t.payHistory.forEach(ph => { html += `<tr><td>${ph.date}</td><td>${ph.type}</td><td class="text-right" style="color:var(--success); font-weight:bold;">${parseFloat(ph.amount).toFixed(2)}</td></tr>`; }); }
+        html += `</table>`; document.getElementById('payHistoryContainer').innerHTML = html; openModal('payHistoryModal');
+    }
+    function openRetModal(id) {
+        document.getElementById('retTransId').value = id; let t = data.transactions.find(x => x.id === id); let html = '';
+        for(let k in t.items) { if(t.items[k].qty > 0) { html += `<div class="form-group" style="margin-bottom:8px;"><label>${k} (Max Allow: ${t.items[k].qty}) @ Rs.${t.items[k].price}</label><input type="number" id="retInp_${k}" max="${t.items[k].qty}" value="${t.items[k].retQty}"></div>`; } }
+        document.getElementById('retItemsContainer').innerHTML = html; openModal('returnModal');
+    }
+    function confirmReturn() {
+        let id = document.getElementById('retTransId').value; let retDate = document.getElementById('retActionDate').value; let t = data.transactions.find(x => x.id === id); let newNet = t.totalOriginal;
+        for(let k in t.items) {
+            let el = document.getElementById(`retInp_${k}`);
+            if(el) {
+                let rq = parseFloat(el.value) || 0; if(rq > t.items[k].qty) rq = t.items[k].qty; let diff = rq - t.items[k].retQty; 
+                if(diff > 0) data.returns.push({ id: Date.now().toString()+Math.random(), transId: t.id, date: retDate, billDate: t.date, partyId: t.partyId, item: k, qty: diff, loss: diff * t.items[k].price });
+                t.items[k].retQty = rq; newNet -= (rq * t.items[k].price);
+            }
+        }
+        t.totalSale = newNet; saveData(); renderLedger(); renderReturns(); closeModal('returnModal');
+    }
+    function openPayModal(id) { document.getElementById('payTransId').value = id; document.getElementById('payAmount').value = ''; openModal('payModal'); }
+    function confirmPay() {
+        let id = document.getElementById('payTransId').value; let amt = parseFloat(document.getElementById('payAmount').value) || 0; let date = document.getElementById('payActionDate').value;
+        let t = data.transactions.find(x => x.id === id);
+        if(amt > 0) { t.payment += amt; if(!t.payHistory) t.payHistory = []; t.payHistory.push({ date: date, amount: amt, type: 'Manual Add' }); saveData(); renderLedger(); }
+        closeModal('payModal');
+    }
+    function openBulkPayModal() { if(!document.getElementById('ledgerParty').value || document.getElementById('ledgerParty').value === 'ALL_SHOPS' || document.getElementById('ledgerParty').value === 'ALL_SUPPLIERS') return alert("කරුණාකර තනි Party එකක් පමණක් තෝරන්න!"); document.getElementById('bulkPayAmount').value = ''; openModal('bulkPayModal'); }
+    function confirmBulkPay() {
+        let pid = document.getElementById('ledgerParty').value; let amt = parseFloat(document.getElementById('bulkPayAmount').value); let date = document.getElementById('bulkPayDate').value;
+        if(isNaN(amt) || amt <= 0) return; let pTrans = data.transactions.filter(x => x.partyId === pid).sort((a,b) => new Date(a.date) - new Date(b.date));
+        for(let t of pTrans) {
+            let due = t.totalSale - t.payment;
+            if(due > 0) {
+                if(!t.payHistory) t.payHistory = [];
+                if(amt >= due) { t.payment += due; t.payHistory.push({date: date, amount: due, type: 'Bulk Pay Split'}); amt -= due; } 
+                else { t.payment += amt; t.payHistory.push({date: date, amount: amt, type: 'Bulk Pay Split'}); amt = 0; break; }
+            }
+        }
+        saveData(); renderLedger(); closeModal('bulkPayModal');
+    }
+
+    // --- 4. Returns Tab ---
+    function renderReturns() {
+        let pid = document.getElementById('retParty').value; let sd = document.getElementById('retStartDate').value; let ed = document.getElementById('retEndDate').value;
+        let yF = document.getElementById('retYearF').value; let bF = document.getElementById('retBatchF').value;
+        if(!data.returns) data.returns = []; 
+        
+        let filteredReturns = data.returns.filter(r => {
+            let origT = data.transactions.find(x => x.id === r.transId) || {};
+            if(sd && r.date < sd) return false; if(ed && r.date > ed) return false;
+            if(pid === 'ALL_SHOPS' && origT.type !== 'shop') return false;
+            if(pid === 'ALL_SUPPLIERS' && origT.type !== 'supplier') return false;
+            if(pid && pid !== 'ALL_SHOPS' && pid !== 'ALL_SUPPLIERS' && r.partyId !== pid) return false;
+            if(yF && origT.batch && !origT.batch.startsWith(yF)) return false;
+            if(bF && origT.batch && !origT.batch.includes(bF)) return false;
+            return true;
+        }).sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+        let totLoss = 0, totQty = 0;
+        filteredReturns.forEach(r => { totLoss += r.loss; totQty += r.qty; });
+
+        let limit = pg.ret.s; let page = pg.ret.p; let totalRecords = filteredReturns.length;
+        let sliced = limit === 'all' ? filteredReturns : filteredReturns.slice((page-1)*limit, page*limit);
+
+        document.querySelector('#returnTable tbody').innerHTML = sliced.map(r => {
+            let p = data.parties.find(x => x.id === r.partyId); let origT = data.transactions.find(x => x.id === r.transId);
+            return `<tr><td><strong>${r.date}</strong></td><td>${p?p.name:'-'}</td><td><span style="color:#6b7280;">${r.billDate}</span></td><td><span style="font-size:11px; background:#e5e7eb; padding:2px 5px; border-radius:4px;">${origT?origT.batch:'-'}</span></td><td>${r.item}</td><td class="text-center" style="font-weight:bold;">${r.qty}</td><td class="text-right text-danger" style="font-weight:bold;">${r.loss.toFixed(2)}</td></tr>`;
+        }).join('');
+        
+        document.getElementById('returnFoot').innerHTML = `<tr><td colspan="5" class="text-right">Total Returns:</td><td class="text-center">${totQty}</td><td class="text-right text-danger">${totLoss.toFixed(2)}</td></tr>`;
+        document.getElementById('returnSummary').innerText = `Total Returns Loss: Rs. ${totLoss.toFixed(2)}`;
+        document.getElementById('retPagination').innerHTML = buildPagination(totalRecords, page, limit, 'ret');
+    }
+
+    // --- 5. Month Tab (Day-by-Day) ---
+    function renderMonth() {
+        let sd = document.getElementById('mStartDate').value; let ed = document.getElementById('mEndDate').value;
+        let yF = document.getElementById('mYearF').value; let bF = document.getElementById('mBatchF').value;
+        let pid = document.getElementById('mParty').value;
+        if(!sd || !ed) return;
+        
+        let currDate = new Date(sd); let lastDate = new Date(ed);
+        currDate.setHours(0,0,0,0); lastDate.setHours(0,0,0,0);
+        let dates = []; 
+        
+        while(currDate <= lastDate) { 
+            dates.push(getLocalYYYYMMDD(currDate)); 
+            currDate.setDate(currDate.getDate() + 1); 
+        }
+        
+        let rows = []; let mSale = 0, mRec = 0, mDue = 0, mPur = 0, mPaidOut = 0, mExp = 0;
+        let mTypes = {Oyster:0, Abalone:0, Milki:0, Dry:0, Other:0, Ret:0};
+
+        dates.sort((a,b)=>new Date(b)-new Date(a)).forEach(dStr => {
+            let dTrans = data.transactions.filter(t => {
+                if(t.date !== dStr) return false;
+                if(pid === 'ALL_SHOPS' && t.type !== 'shop') return false;
+                if(pid === 'ALL_SUPPLIERS' && t.type !== 'supplier') return false;
+                if(pid && pid !== 'ALL_SHOPS' && pid !== 'ALL_SUPPLIERS' && t.partyId !== pid) return false;
+                if(yF && t.batch && !t.batch.startsWith(yF)) return false;
+                if(bF && t.batch && !t.batch.includes(bF)) return false; return true;
+            });
+            
+            let dSale = 0, dRec = 0, dDueAmt = 0, dPur = 0, dPaidOut = 0, dExpDay = 0;
+            let dTypes = {Oyster:0, Abalone:0, Milki:0, Dry:0, Other:0, Ret:0};
+
+            dTrans.forEach(t => { 
+                if(t.type === 'shop') { 
+                    dSale += t.totalSale; dRec += parseFloat(t.payment); dDueAmt += (t.totalSale - parseFloat(t.payment));
+                    for(let k in t.items) { dTypes[k] += (t.items[k].qty - t.items[k].retQty); dTypes.Ret += t.items[k].retQty; }
+                } else { 
+                    dPur += t.totalSale; dPaidOut += parseFloat(t.payment); 
+                } 
+            });
+            
+            data.expenses.filter(e => {
+                if(e.date !== dStr) return false;
+                if(yF && e.batch && !e.batch.startsWith(yF)) return false;
+                if(bF && e.batch && !e.batch.includes(bF)) return false;
+                if(pid && pid !== 'ALL_SHOPS' && pid !== 'ALL_SUPPLIERS') return false; 
+                return true;
+            }).forEach(e => dExpDay += parseFloat(e.total));
+            
+            mSale += dSale; mRec += dRec; mDue += dDueAmt; mPur += dPur; mPaidOut += dPaidOut; mExp += dExpDay;
+            mTypes.Oyster+=dTypes.Oyster; mTypes.Abalone+=dTypes.Abalone; mTypes.Milki+=dTypes.Milki; mTypes.Dry+=dTypes.Dry; mTypes.Other+=dTypes.Other; mTypes.Ret+=dTypes.Ret;
+
+            if(dSale>0 || dRec>0 || dPur>0 || dPaidOut>0 || dExpDay>0) {
+                rows.push({dStr, dTypes, dSale, dRec, dDueAmt, dPur, dPaidOut, dExpDay});
+            }
+        });
+        
+        let limit = pg.m.s; let page = pg.m.p; let totalRecords = rows.length;
+        let sliced = limit === 'all' ? rows : rows.slice((page-1)*limit, page*limit);
+
+        let html = '';
+        sliced.forEach(r => {
+            html += `<tr><td style="font-weight:600;">${r.dStr}</td><td class="text-center">${r.dTypes.Oyster}</td><td class="text-center">${r.dTypes.Abalone}</td><td class="text-center">${r.dTypes.Milki}</td><td class="text-center">${r.dTypes.Dry}</td><td class="text-center">${r.dTypes.Other}</td><td class="text-center text-danger">${r.dTypes.Ret}</td><td class="text-right" style="color:${r.dSale>0?'var(--primary)':''}">${r.dSale.toFixed(2)}</td><td class="text-right" style="color:var(--success); font-weight:bold;">${r.dRec.toFixed(2)}</td><td class="text-right" style="color:var(--info); font-weight:bold;">${r.dDueAmt.toFixed(2)}</td><td class="text-right" style="color:${r.dPur>0?'var(--danger)':''}">${r.dPur.toFixed(2)}</td><td class="text-right" style="color:var(--warning);">${r.dPaidOut.toFixed(2)}</td><td class="text-right text-danger">${r.dExpDay.toFixed(2)}</td></tr>`;
+        });
+
+        document.querySelector('#monthTable tbody').innerHTML = html;
+        document.getElementById('monthFoot').innerHTML = `<tr><td class="text-right">Totals:</td><td class="text-center">${mTypes.Oyster}</td><td class="text-center">${mTypes.Abalone}</td><td class="text-center">${mTypes.Milki}</td><td class="text-center">${mTypes.Dry}</td><td class="text-center">${mTypes.Other}</td><td class="text-center text-danger">${mTypes.Ret}</td><td class="text-right">${mSale.toFixed(2)}</td><td class="text-right" style="color:var(--success);">${mRec.toFixed(2)}</td><td class="text-right" style="color:var(--info);">${mDue.toFixed(2)}</td><td class="text-right">${mPur.toFixed(2)}</td><td class="text-right">${mPaidOut.toFixed(2)}</td><td class="text-right text-danger">${mExp.toFixed(2)}</td></tr>`;
+        document.getElementById('mPagination').innerHTML = buildPagination(totalRecords, page, limit, 'm');
+
+        document.getElementById('monthSummaryCards').innerHTML = `
+            <div class="summary-card" style="background:#e0f2fe; border-left-color:#0ea5e9;">අලෙවිය (Sales):<br><span style="font-size:18px;">Rs. ${mSale.toFixed(2)}</span></div>
+            <div class="summary-card summary-success">ලැබීම් (Cash In):<br><span style="font-size:18px; color:var(--success);">Rs. ${mRec.toFixed(2)}</span></div>
+            <div class="summary-card summary-warn">හිඟ මුදල (Due):<br><span style="font-size:18px; color:#b45309;">Rs. ${mDue.toFixed(2)}</span></div>
+            <div class="summary-card" style="background:#f3f4f6; border-left-color:#6b7280;">මිලදීගැනීම් (Purchases):<br><span style="font-size:18px;">Rs. ${mPur.toFixed(2)}</span></div>
+            <div class="summary-card summary-danger">මුළු ගෙවීම්/වියදම් (Out):<br><span style="font-size:18px; color:var(--danger);">Rs. ${(mPaidOut + mExp).toFixed(2)}</span><div style="font-size:11px; color:#7f1d1d; margin-top:3px; font-weight:normal;">(සැපයුම්කරුවන්ට: Rs.${mPaidOut.toFixed(2)} | වියදම්: Rs.${mExp.toFixed(2)})</div></div>
+        `;
+    }
+
+    // --- 6. Expenses ---
+    function calcExp() { let r = parseFloat(document.getElementById('expRate').value) || 0; let q = parseFloat(document.getElementById('expQty').value) || 0; document.getElementById('expTotal').value = (r*q).toFixed(2); }
+    
+    function saveExpense() {
+        let date = document.getElementById('expDate').value; 
+        let item = document.getElementById('expItem').value.trim(); 
+        let tot = parseFloat(document.getElementById('expTotal').value);
+        let year = document.getElementById('expYear').value;
+        let batchNo = document.getElementById('expBatchList').value.trim();
+        let batchStr = batchNo ? year + "-" + batchNo : '';
+        let editId = document.getElementById('editExpId').value;
+
+        if(!date || !item || !tot) return alert("කරුණාකර දත්ත පුරවන්න!");
+
+        if(editId) {
+            let e = data.expenses.find(x => x.id === editId);
+            if(e) { e.date = date; e.item = item; e.rate = document.getElementById('expRate').value; e.qty = document.getElementById('expQty').value; e.total = tot; e.batch = batchStr; alert("වියදම Update කරන ලදි!"); }
+        } else {
+            data.expenses.push({ id: Date.now().toString(), date, item, rate: document.getElementById('expRate').value, qty: document.getElementById('expQty').value, total: tot, batch: batchStr });
+            alert("වියදම සුරැකින ලදි!");
+        }
+        saveData(); resetExpForm(); updateGlobalBatches(false); renderExpenses();
+    }
+    
+    function editExp(id) {
+        let e = data.expenses.find(x => x.id === id); if(!e) return;
+        document.getElementById('editExpId').value = e.id;
+        document.getElementById('expDate').value = e.date;
+        document.getElementById('expItem').value = e.item;
+        document.getElementById('expRate').value = e.rate;
+        document.getElementById('expQty').value = e.qty;
+        document.getElementById('expTotal').value = e.total;
+        if(e.batch) {
+            let parts = e.batch.split('-');
+            if(parts.length >= 2) { document.getElementById('expYear').value = parts[0]; document.getElementById('expBatchList').value = parts.slice(1).join('-'); }
+        }
+        document.getElementById('btnSaveExp').innerText = "Update Expense (සංස්කරණය)";
+        document.getElementById('cancelExpBtn').style.display = "inline-block";
+        window.scrollTo(0,0);
+    }
+    
+    function resetExpForm() {
+        document.getElementById('editExpId').value = ''; document.getElementById('expItem').value = ''; document.getElementById('expRate').value = '0'; document.getElementById('expQty').value = '1'; document.getElementById('expTotal').value = '0';
+        document.getElementById('btnSaveExp').innerText = "වියදම සුරකින්න"; document.getElementById('cancelExpBtn').style.display = "none";
+    }
+
+    function renderExpenses() {
+        let yF = document.getElementById('expYearF').value; let bF = document.getElementById('expBatchF').value;
+        
+        let filteredExp = data.expenses.filter(e => {
+            if(yF && e.batch && !e.batch.startsWith(yF)) return false;
+            if(bF && e.batch && !e.batch.includes(bF)) return false;
+            return true;
+        }).sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+        let tot = 0; filteredExp.forEach(e => tot += parseFloat(e.total));
+        
+        let limit = pg.exp.s; let page = pg.exp.p; let totalRecords = filteredExp.length;
+        let sliced = limit === 'all' ? filteredExp : filteredExp.slice((page-1)*limit, page*limit);
+
+        document.querySelector('#expenseTable tbody').innerHTML = sliced.map(e => { return `<tr><td><strong>${e.date}</strong></td><td><span style="font-size:11px; background:#e5e7eb; padding:2px 5px; border-radius:4px;">${e.batch||'-'}</span></td><td>${e.item}</td><td class="text-right">${e.rate}</td><td class="text-right">${e.qty}</td><td class="text-right text-danger" style="font-weight:bold">${parseFloat(e.total).toFixed(2)}</td><td class="text-center"><button class="btn btn-warning" style="padding:4px 8px; font-size:12px;" onclick="editExp('${e.id}')">E</button> <button class="btn btn-danger" style="padding:4px 8px; font-size:12px;" onclick="delExp('${e.id}')">X</button></td></tr>`; }).join('');
+        document.getElementById('expenseFoot').innerHTML = `<tr><td colspan="5" class="text-right">Total Expenses:</td><td class="text-right text-danger">${tot.toFixed(2)}</td><td></td></tr>`;
+        document.getElementById('expPagination').innerHTML = buildPagination(totalRecords, page, limit, 'exp');
+    }
+    function delExp(id) { if(confirm("මෙම වාර්තාව මකා දැමීමට අවශ්‍යද?")) { data.expenses = data.expenses.filter(x => x.id !== id); saveData(); renderExpenses(); updateGlobalBatches(false);} }
+
+    // --- 7. ERP Reports (Comprehensive Table & Charts) ---
+    function renderReports() {
+        let sd = document.getElementById('repStartDate').value; let ed = document.getElementById('repEndDate').value;
+        let yF = document.getElementById('repYearF').value; let bF = document.getElementById('repBatchF').value;
+        let pid = document.getElementById('repParty').value;
+        if(!sd || !ed) return;
+
+        let income = 0, repSupplierPay = 0, repExpenses = 0, totalDue = 0;
+        let pStats = {}; data.parties.forEach(p => pStats[p.id] = { name:p.name, type:p.type, delQty:0, retQty:0, netQty:0, grossValue:0, netValue:0, paid:0, due:0 });
+        
+        let typeStats = {}; itemTypes.forEach(t => typeStats[t] = { netQty:0, netRs:0 });
+        let purTypeStats = {}; itemTypes.forEach(t => purTypeStats[t] = { netQty:0, netRs:0 });
+
+        // Process Transactions
+        data.transactions.forEach(t => {
+            if(sd && t.date < sd) return; if(ed && t.date > ed) return;
+            if(yF && (!t.batch || !t.batch.startsWith(yF))) return; if(bF && (!t.batch || !t.batch.includes(bF))) return;
+            
+            if(pid === 'ALL_SHOPS' && t.type !== 'shop') return;
+            if(pid === 'ALL_SUPPLIERS' && t.type !== 'supplier') return;
+            if(pid && pid !== 'ALL_SHOPS' && pid !== 'ALL_SUPPLIERS' && t.partyId !== pid) return;
+
+            let pS = pStats[t.partyId]; if(!pS) return;
+            
+            if(t.type === 'shop') { 
+                income += parseFloat(t.payment); totalDue += (t.totalSale - parseFloat(t.payment)); 
+                for(let k in t.items) {
+                    let netQ = t.items[k].qty - t.items[k].retQty;
+                    typeStats[k].netQty += netQ; typeStats[k].netRs += (netQ * t.items[k].price);
+                }
+            } else { 
+                repSupplierPay += parseFloat(t.payment); 
+                for(let k in t.items) {
+                    let netQ = t.items[k].qty - t.items[k].retQty;
+                    purTypeStats[k].netQty += netQ; purTypeStats[k].netRs += (netQ * t.items[k].price);
+                }
+            }
+            
+            pS.paid += parseFloat(t.payment); pS.grossValue += t.totalOriginal; pS.netValue += t.totalSale; pS.due += (t.totalSale - parseFloat(t.payment));
+            for(let k in t.items) { pS.delQty += t.items[k].qty; pS.retQty += t.items[k].retQty; pS.netQty += (t.items[k].qty - t.items[k].retQty); }
+        });
+        
+        // Add Normal Expenses
+        data.expenses.forEach(e => { 
+            if(sd && e.date >= sd && ed && e.date <= ed) {
+                if(yF && (!e.batch || !e.batch.startsWith(yF))) return; 
+                if(bF && (!e.batch || !e.batch.includes(bF))) return;
+                if(pid && pid !== 'ALL_SHOPS' && pid !== 'ALL_SUPPLIERS') return; // Hide standard expenses if one specific shop filtered
+                repExpenses += parseFloat(e.total); 
+            }
+        });
+        
+        let totalOut = repSupplierPay + repExpenses;
+        let netProfit = income - totalOut;
+
+        document.getElementById('repIncome').innerText = `Rs. ${income.toFixed(2)}`;
+        document.getElementById('repExpense').innerText = `Rs. ${totalOut.toFixed(2)}`;
+        document.getElementById('repExpenseBreakdown').innerText = `(සැපයුම්කරුවන්ට: Rs.${repSupplierPay.toFixed(2)} | වියදම්: Rs.${repExpenses.toFixed(2)})`;
+        document.getElementById('repDue').innerText = `Rs. ${totalDue.toFixed(2)}`;
+        document.getElementById('repNet').innerText = `Rs. ${netProfit.toFixed(2)}`;
+
+        // Party Table Build
+        let tDel=0, tRet=0, tNet=0, tGross=0, tNetVal=0, tPaid=0, tDueAmt=0;
+        let sNames = [], sVals = []; let pRows = [];
+        
+        for(let p_id in pStats) {
+            let s = pStats[p_id];
+            if(s.delQty > 0 || s.paid > 0 || s.grossValue > 0) {
+                tDel+=s.delQty; tRet+=s.retQty; tNet+=s.netQty; tGross+=s.grossValue; tNetVal+=s.netValue; tPaid+=s.paid; tDueAmt+=s.due;
+                if(s.type === 'shop' && s.netValue > 0) { sNames.push(s.name); sVals.push(s.netValue); }
+                pRows.push(`<tr><td><strong>${s.name}</strong></td><td><span style="font-size:11px; background:#e5e7eb; padding:2px 5px; border-radius:4px;">${s.type}</span></td><td class="text-center">${s.delQty}</td><td class="text-center" style="color:var(--danger);">${s.retQty}</td><td class="text-center" style="font-weight:bold;">${s.netQty}</td><td class="text-right" style="color:#6b7280;">${s.grossValue.toFixed(2)}</td><td class="text-right" style="color:var(--primary); font-weight:bold;">${s.netValue.toFixed(2)}</td><td class="text-right" style="color:${s.type==='shop'?'var(--success)':'var(--warning)'}; font-weight:bold;">${s.paid.toFixed(2)}</td><td class="text-right" style="color:${s.due>0?'var(--danger)':'#1f2937'}; font-weight:bold;">${s.due.toFixed(2)}</td></tr>`);
+            }
+        }
+        
+        let limit = pg.repParty.s; let page = pg.repParty.p; let totalRecords = pRows.length;
+        let sliced = limit === 'all' ? pRows : pRows.slice((page-1)*limit, page*limit);
+
+        document.querySelector('#reportPartyTable tbody').innerHTML = sliced.join('');
+        document.getElementById('reportPartyFoot').innerHTML = `<tr><td colspan="2" class="text-right">GRAND TOTALS:</td><td class="text-center">${tDel}</td><td class="text-center" style="color:var(--danger);">${tRet}</td><td class="text-center">${tNet}</td><td class="text-right">${tGross.toFixed(2)}</td><td class="text-right" style="color:var(--primary);">${tNetVal.toFixed(2)}</td><td class="text-right">${tPaid.toFixed(2)}</td><td class="text-right" style="color:var(--danger);">${tDueAmt.toFixed(2)}</td></tr>`;
+        document.getElementById('repPartyPagination').innerHTML = buildPagination(totalRecords, page, limit, 'repParty');
+
+        // Type Table Build (Sales)
+        let tH = ''; let ttSold = 0, ttRs = 0;
+        for(let k in typeStats) {
+            ttSold += typeStats[k].netQty; ttRs += typeStats[k].netRs;
+            tH += `<tr><td><strong>${k}</strong></td><td class="text-center" style="font-weight:bold;">${typeStats[k].netQty}</td><td class="text-right" style="font-weight:bold; color:var(--primary);">Rs. ${typeStats[k].netRs.toFixed(2)}</td></tr>`;
+        }
+        document.querySelector('#reportTypeTable tbody').innerHTML = tH;
+        document.getElementById('reportTypeFoot').innerHTML = `<tr><td class="text-right">Total:</td><td class="text-center">${ttSold}</td><td class="text-right">Rs. ${ttRs.toFixed(2)}</td></tr>`;
+
+        // Pur Type Table Build (Suppliers)
+        let pH = ''; let ptSold = 0, ptRs = 0;
+        for(let k in purTypeStats) {
+            ptSold += purTypeStats[k].netQty; ptRs += purTypeStats[k].netRs;
+            pH += `<tr><td><strong>${k}</strong></td><td class="text-center" style="font-weight:bold;">${purTypeStats[k].netQty}</td><td class="text-right" style="font-weight:bold; color:var(--danger);">Rs. ${purTypeStats[k].netRs.toFixed(2)}</td></tr>`;
+        }
+        document.querySelector('#reportPurTypeTable tbody').innerHTML = pH;
+        document.getElementById('reportPurTypeFoot').innerHTML = `<tr><td class="text-right">Total:</td><td class="text-center">${ptSold}</td><td class="text-right">Rs. ${ptRs.toFixed(2)}</td></tr>`;
+
+        // Charts
+        setTimeout(() => {
+            if(pieChartInstance) pieChartInstance.destroy();
+            pieChartInstance = new Chart(document.getElementById('pieChart'), {
+                type: 'doughnut',
+                data: { labels: sNames, datasets: [{ data: sVals, backgroundColor: ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444', '#ec4899', '#06b6d4', '#14b8a6', '#f43f5e'] }] },
+                options: { maintainAspectRatio: false, plugins: { title: {display:true, text:'කඩ අනුව අලෙවිය (Shop Revenue Share)'} } }
+            });
+
+            if(shopChartInstance) shopChartInstance.destroy();
+            shopChartInstance = new Chart(document.getElementById('shopChart'), {
+                type: 'bar',
+                data: { labels: sNames, datasets: [{ label:'Net Revenue by Shop (Rs)', data: sVals, backgroundColor: '#3b82f6', borderRadius: 4 }] },
+                options: { maintainAspectRatio: false, plugins: { title: {display:true, text:'Shop Performance (Revenue)'} }, scales: { y: { beginAtZero: true } } }
+            });
+        }, 50);
+    }
+
+    // --- 8. Notes & Reminders ---
+    function saveNote() {
+        let date = document.getElementById('noteDate').value; let text = document.getElementById('noteText').value.trim(); let alarm = document.getElementById('noteAlarm').value;
+        if(!date || !text) return alert("කරුණාකර දත්ත ඇතුලත් කරන්න!");
+        data.notes.push({ id: Date.now().toString(), date, text, alarm }); saveData();
+        document.getElementById('noteText').value = ''; renderNotes(); alert("සටහන සුරැකින ලදි!");
+    }
+    function renderNotes() {
+        let tbody = document.querySelector('#notesTable tbody');
+        tbody.innerHTML = data.notes.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(n => `<tr><td><strong>${n.date}</strong></td><td>${n.text}</td><td><span style="color:${n.alarm==='on'?'var(--success)':'#6b7280'}; font-weight:bold;">${n.alarm.toUpperCase()}</span></td><td class="text-center"><button class="btn btn-danger" style="padding:4px 8px;" onclick="delNote('${n.id}')">X</button></td></tr>`).join('');
+    }
+    function delNote(id) { data.notes = data.notes.filter(x => x.id !== id); saveData(); renderNotes(); }
+
+    function checkReminders() {
+        let today = new Date().toISOString().split('T')[0];
+        let todayNotes = data.notes.filter(n => n.date === today && n.alarm === 'on');
+        if(todayNotes.length > 0) {
+            let html = todayNotes.map(n => `<div style="background:#fffbeb; padding:10px; margin-bottom:10px; border-left:4px solid var(--warning); border-radius:3px; font-weight:bold;">${n.text}</div>`).join('');
+            document.getElementById('reminderItems').innerHTML = html;
+            openModal('reminderModal');
+        }
+    }
+
+    // --- 9. Settings / Backup ---
+    function exportData() {
+        let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+        let dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "LUNA_ERP_Backup_" + new Date().toISOString().split('T')[0] + ".json");
+        document.body.appendChild(dl); dl.click(); dl.remove();
+    }
+    function importData() {
+        let f = document.getElementById('importFile'); if(!f.files.length) return alert("කරුණාකර Backup File එක තෝරන්න!");
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                let imported = JSON.parse(e.target.result);
+                if(imported.parties && imported.transactions) { 
+                    if(!imported.notes) imported.notes = [];
+                    data = imported; saveData(); alert("දත්ත සාර්ථකව Restore කරන ලදි!"); location.reload(); 
+                } else { alert("File Format වැරදියි!"); }
+            } catch(err) { alert("Error reading file!"); }
+        };
+        reader.readAsText(f.files[0]);
+    }
+    function resetData() { if(confirm("අවවාදයයි! සියලුම දත්ත මැකී යනු ඇත. විශ්වාසද?")) { if(confirm("ඔබට 100% විශ්වාසද?")) { localStorage.removeItem('mush_data_v10'); location.reload(); } } }
+</script>
+
+</body>
+</html>
