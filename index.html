@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LUNA FOOD - ERP System V10.5 (Stable)</title>
+    <!-- MUSHROOM FAVICON ADDED -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍄</text></svg>">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -156,7 +158,7 @@
         <button class="btn btn-danger" id="btnCancelParty" style="display:none;" onclick="resetPartyForm()">අවලංගු කරන්න (Cancel)</button>
         <hr style="border:0; border-top:1px solid #e5e7eb; margin: 20px 0;">
         <table id="partyTable">
-            <thead><tr><th>නම (Name)</th><th>වර්ගය (Type)</th><th>දුරකථන (Mobile)</th><th>Action</th></tr></thead>
+            <thead><tr><th>No</th><th>නම (Name)</th><th>වර්ගය (Type)</th><th>දුරකථන (Mobile)</th><th>Action</th></tr></thead>
             <tbody></tbody>
         </table>
     </div>
@@ -227,7 +229,7 @@
         
         <div style="overflow-x:auto;">
             <table id="ledgerTable">
-                <thead><tr><th>Date & Batch</th><th>Party Name</th><th>Items (Qty@Price)</th><th>Orig. Value</th><th>Returned</th><th>Net Sale</th><th>Paid</th><th>Due Balance</th><th class="text-center">Action</th></tr></thead>
+                <thead><tr><th>No</th><th>Date & Batch</th><th>Party Name</th><th>Items (Qty@Price)</th><th>Orig. Value</th><th>Returned</th><th>Net Sale</th><th>Paid</th><th>Due Balance</th><th class="text-center">Action</th></tr></thead>
                 <tbody></tbody>
                 <tfoot id="ledgerFoot"></tfoot>
             </table>
@@ -256,7 +258,7 @@
         <button class="btn btn-danger btn-pdf" onclick="window.print()">📄 Download PDF</button>
         <div style="overflow-x:auto;">
             <table id="returnTable">
-                <thead><tr><th>Return Date</th><th>Shop / Party</th><th>Original Bill Date</th><th>Batch</th><th>Item</th><th>Returned Qty</th><th>Loss (Rs)</th></tr></thead>
+                <thead><tr><th>No</th><th>Return Date</th><th>Shop / Party</th><th>Original Bill Date</th><th>Batch</th><th>Item</th><th>Returned Qty</th><th>Loss (Rs)</th></tr></thead>
                 <tbody></tbody>
                 <tfoot id="returnFoot"></tfoot>
             </table>
@@ -290,7 +292,7 @@
         <div style="overflow-x:auto;">
             <table id="monthTable">
                 <thead><tr>
-                    <th>දිනය (Date)</th><th>Oyster</th><th>Abalone</th><th>Milki</th><th>Dry</th><th>Other</th><th>Ret Qty</th>
+                    <th>No</th><th>දිනය (Date)</th><th>Oyster</th><th>Abalone</th><th>Milki</th><th>Dry</th><th>Other</th><th>Ret Qty</th>
                     <th>අලෙවිය (Sales)</th><th>ලැබීම් (Cash In)</th><th>හිඟ මුදල (Due)</th><th>මිලදීගැනීම් (Pur.)</th><th>සැපයුම් ගෙවීම් (Pay)</th><th>වියදම් (Exp)</th>
                 </tr></thead>
                 <tbody></tbody>
@@ -336,7 +338,7 @@
         <button class="btn btn-danger btn-pdf" onclick="window.print()">📄 Download PDF</button>
         <div style="overflow-x:auto;">
             <table id="expenseTable">
-                <thead><tr><th>Date</th><th>Batch</th><th>Description</th><th>Rate</th><th>Qty</th><th>Total (Rs)</th><th>Action</th></tr></thead>
+                <thead><tr><th>No</th><th>Date</th><th>Batch</th><th>Description</th><th>Rate</th><th>Qty</th><th>Total (Rs)</th><th>Action</th></tr></thead>
                 <tbody></tbody>
                 <tfoot id="expenseFoot"></tfoot>
             </table>
@@ -392,7 +394,7 @@
         <div style="overflow-x:auto;">
             <table id="reportPartyTable">
                 <thead>
-                    <tr><th>Party Name</th><th>Type</th><th>Delivered (Qty)</th><th>Returns (Qty)</th><th>Net (Qty)</th><th>Gross Value (Rs)</th><th>Net Value (Rs)</th><th>Collected/Paid (Rs)</th><th>Due Amount (Rs)</th></tr>
+                    <tr><th>No</th><th>Party Name</th><th>Type</th><th>Delivered (Qty)</th><th>Returns (Qty)</th><th>Net (Qty)</th><th>Gross Value (Rs)</th><th>Net Value (Rs)</th><th>Collected/Paid (Rs)</th><th>Due Amount (Rs)</th></tr>
                 </thead>
                 <tbody></tbody>
                 <tfoot id="reportPartyFoot"></tfoot>
@@ -406,7 +408,7 @@
                 <h3 style="color:var(--primary); margin-top:0;">හතු වර්ග අනුව අලෙවිය <br><small style="color:#6b7280; font-size:12px;">(Shop Sales Only)</small></h3>
                 <button class="btn btn-excel" onclick="exportTableToCSV('reportTypeTable', 'Sales_Types.csv')" style="font-size:11px;">📥 Export</button>
                 <table id="reportTypeTable">
-                    <thead><tr><th>Mushroom Type</th><th>Net Sold Qty</th><th>Net Revenue (Rs)</th></tr></thead>
+                    <thead><tr><th>No</th><th>Mushroom Type</th><th>Net Sold Qty</th><th>Net Revenue (Rs)</th></tr></thead>
                     <tbody></tbody>
                     <tfoot id="reportTypeFoot"></tfoot>
                 </table>
@@ -417,7 +419,7 @@
                 <h3 style="color:var(--danger); margin-top:0;">හතු වර්ග අනුව මිලදීගැනීම් <br><small style="color:#6b7280; font-size:12px;">(Supplier Purchases Only)</small></h3>
                 <button class="btn btn-excel" onclick="exportTableToCSV('reportPurTypeTable', 'Purchase_Types.csv')" style="font-size:11px; background-color:var(--danger);">📥 Export</button>
                 <table id="reportPurTypeTable">
-                    <thead><tr><th>Mushroom Type</th><th>Net Bought Qty</th><th>Net Cost (Rs)</th></tr></thead>
+                    <thead><tr><th>No</th><th>Mushroom Type</th><th>Net Bought Qty</th><th>Net Cost (Rs)</th></tr></thead>
                     <tbody></tbody>
                     <tfoot id="reportPurTypeFoot"></tfoot>
                 </table>
@@ -449,7 +451,7 @@
             <div class="form-group" style="justify-content: flex-end;"><button class="btn btn-warning" style="color:#000;" onclick="saveNote()">Save Note</button></div>
         </div>
         <table id="notesTable">
-            <thead><tr><th>Date</th><th>Note / Message</th><th>Alarm Status</th><th class="text-center">Action</th></tr></thead>
+            <thead><tr><th>No</th><th>Date</th><th>Note / Message</th><th>Alarm Status</th><th class="text-center">Action</th></tr></thead>
             <tbody></tbody>
         </table>
     </div>
@@ -490,6 +492,34 @@
     if (!data.notes) data.notes = [];
     const itemTypes = ['Oyster', 'Abalone', 'Milki', 'Dry', 'Other'];
     let shopChartInstance = null; let pieChartInstance = null; let batchLineChartInstance = null;
+
+    // Firebase Hooks for Offline & Sync Data Update
+    window.getAppData = function() { return data; };
+    window.updateDataFromFirebase = function(fbData) {
+        data = fbData;
+        if (!data.partyPrices) data.partyPrices = {};
+        if (!data.notes) data.notes = [];
+        if (!data.parties) data.parties = [];
+        if (!data.transactions) data.transactions = [];
+        if (!data.expenses) data.expenses = [];
+        if (!data.returns) data.returns = [];
+        
+        localStorage.setItem('mush_data_v10', JSON.stringify(data));
+        updateDropdowns();
+        
+        // Re-render active tab based on new data
+        let activeTab = document.querySelector('.tab-content.active');
+        if(activeTab) {
+            let id = activeTab.id;
+            if(id === 'RegTab') renderParties();
+            if(id === 'LedgerTab') renderLedger();
+            if(id === 'MonthTab') renderMonth();
+            if(id === 'ExpenseTab') renderExpenses();
+            if(id === 'ReportTab') renderReports();
+            if(id === 'ReturnTab') renderReturns();
+            if(id === 'NotesTab') renderNotes();
+        }
+    };
 
     // --- Pagination State ---
     let pg = {
@@ -548,7 +578,13 @@
         });
     }
 
-    function saveData() { localStorage.setItem('mush_data_v10', JSON.stringify(data)); }
+    // MODIFIED saveData: also trigger Firebase sync
+    function saveData() { 
+        localStorage.setItem('mush_data_v10', JSON.stringify(data)); 
+        if(window.syncToFirebase) {
+            window.syncToFirebase(data);
+        }
+    }
 
     // --- GLOBAL FILTER LOGIC ---
     function updateGlobalBatches(triggerApply = true) {
@@ -779,7 +815,7 @@
         document.getElementById('btnSaveParty').innerText = "Register"; document.getElementById('btnCancelParty').style.display = "none";
     }
     function renderParties() {
-        document.querySelector('#partyTable tbody').innerHTML = data.parties.map(p => `<tr><td><strong>${p.name}</strong></td><td><span style="background:#e5e7eb; padding:3px 8px; border-radius:12px; font-size:12px;">${p.type === 'shop' ? 'Shop' : 'Supplier'}</span></td><td>${p.mobile||'-'}</td><td class="text-center"><button class="btn btn-warning" style="padding:4px 8px;" onclick="editParty('${p.id}')">E</button><button class="btn btn-danger" style="padding:4px 8px;" onclick="delParty('${p.id}')">X</button></td></tr>`).join('');
+        document.querySelector('#partyTable tbody').innerHTML = data.parties.map((p, i) => `<tr><td>${i+1}</td><td><strong>${p.name}</strong></td><td><span style="background:#e5e7eb; padding:3px 8px; border-radius:12px; font-size:12px;">${p.type === 'shop' ? 'Shop' : 'Supplier'}</span></td><td>${p.mobile||'-'}</td><td class="text-center"><button class="btn btn-warning" style="padding:4px 8px;" onclick="editParty('${p.id}')">E</button><button class="btn btn-danger" style="padding:4px 8px;" onclick="delParty('${p.id}')">X</button></td></tr>`).join('');
     }
     function delParty(id) { if(confirm("මකන්න විශ්වාසද?")) { data.parties = data.parties.filter(x => x.id !== id); saveData(); updateDropdowns(); renderParties(); } }
     
@@ -905,20 +941,21 @@
         let limit = pg.ledger.s;
         let page = pg.ledger.p;
         let sliced = limit === 'all' ? pTrans : pTrans.slice((page-1)*limit, page*limit);
+        let startIndex = limit === 'all' ? 0 : (page - 1) * limit;
 
         let html = '';
-        sliced.forEach(t => {
+        sliced.forEach((t, i) => {
             let p = data.parties.find(x => x.id === t.partyId); let due = t.totalSale - t.payment;
             let itmStr = '', retStr = '';
             for(let k in t.items) {
                 if(t.items[k].qty > 0) itmStr += `<span style="margin-right:8px; font-weight:600;">${k}:${t.items[k].qty}@${t.items[k].price}</span>`;
                 if(t.items[k].retQty > 0) retStr += `<span style="color:var(--danger); margin-right:8px; font-weight:bold;">${k} [Ret:${t.items[k].retQty}]</span>`;
             }
-            html += `<tr><td><span class="date-link" onclick="viewPayHistory('${t.id}')">${t.date}</span><br><span style="font-size:11px; background:#e5e7eb; padding:2px 5px; border-radius:4px;">${t.batch||'No Batch'}</span></td><td><small style="color:#6b7280;">${p?p.name:'-'}</small></td><td>${itmStr}<br>${retStr}</td><td class="text-right" style="color:#6b7280;">${t.totalOriginal.toFixed(2)}</td><td class="text-right text-danger">${(t.totalOriginal - t.totalSale).toFixed(2)}</td><td class="text-right" style="font-weight:bold; color:var(--primary);">${t.totalSale.toFixed(2)}</td><td class="text-right" style="color:var(--success); font-weight:600;">${t.payment.toFixed(2)}</td><td class="text-right" style="color:${due>0?'var(--danger)':'#1f2937'}; font-weight:bold;">${due.toFixed(2)}</td><td class="text-center"><button class="btn btn-info" style="padding:4px 6px; font-size:12px;" onclick="editTransaction('${t.id}')">E</button> <button class="btn btn-warning" style="padding:4px 6px; font-size:12px;" onclick="openPayModal('${t.id}')">Pay</button> <button class="btn btn-danger" style="padding:4px 6px; font-size:12px;" onclick="openRetModal('${t.id}')">Ret</button> <button class="btn" style="padding:4px 6px; font-size:12px; background:#4b5563;" onclick="delTrans('${t.id}')">X</button></td></tr>`;
+            html += `<tr><td>${startIndex + i + 1}</td><td><span class="date-link" onclick="viewPayHistory('${t.id}')">${t.date}</span><br><span style="font-size:11px; background:#e5e7eb; padding:2px 5px; border-radius:4px;">${t.batch||'No Batch'}</span></td><td><small style="color:#6b7280;">${p?p.name:'-'}</small></td><td>${itmStr}<br>${retStr}</td><td class="text-right" style="color:#6b7280;">${t.totalOriginal.toFixed(2)}</td><td class="text-right text-danger">${(t.totalOriginal - t.totalSale).toFixed(2)}</td><td class="text-right" style="font-weight:bold; color:var(--primary);">${t.totalSale.toFixed(2)}</td><td class="text-right" style="color:var(--success); font-weight:600;">${t.payment.toFixed(2)}</td><td class="text-right" style="color:${due>0?'var(--danger)':'#1f2937'}; font-weight:bold;">${due.toFixed(2)}</td><td class="text-center"><button class="btn btn-info" style="padding:4px 6px; font-size:12px;" onclick="editTransaction('${t.id}')">E</button> <button class="btn btn-warning" style="padding:4px 6px; font-size:12px;" onclick="openPayModal('${t.id}')">Pay</button> <button class="btn btn-danger" style="padding:4px 6px; font-size:12px;" onclick="openRetModal('${t.id}')">Ret</button> <button class="btn" style="padding:4px 6px; font-size:12px; background:#4b5563;" onclick="delTrans('${t.id}')">X</button></td></tr>`;
         });
         
         document.querySelector('#ledgerTable tbody').innerHTML = html;
-        document.getElementById('ledgerFoot').innerHTML = `<tr><td colspan="3" class="text-right">Ledger Totals:</td><td class="text-right">${fGross.toFixed(2)}</td><td class="text-right text-danger">${fRet.toFixed(2)}</td><td class="text-right" style="color:var(--primary);">${fNet.toFixed(2)}</td><td class="text-right" style="color:var(--success);">${fPaid.toFixed(2)}</td><td class="text-right" style="color:var(--danger);">${fDue.toFixed(2)}</td><td></td></tr>`;
+        document.getElementById('ledgerFoot').innerHTML = `<tr><td colspan="4" class="text-right">Ledger Totals:</td><td class="text-right">${fGross.toFixed(2)}</td><td class="text-right text-danger">${fRet.toFixed(2)}</td><td class="text-right" style="color:var(--primary);">${fNet.toFixed(2)}</td><td class="text-right" style="color:var(--success);">${fPaid.toFixed(2)}</td><td class="text-right" style="color:var(--danger);">${fDue.toFixed(2)}</td><td></td></tr>`;
         document.getElementById('ledgerPagination').innerHTML = buildPagination(totalRecords, page, limit, 'ledger');
 
         let qtyHTML = '';
@@ -1005,13 +1042,14 @@
 
         let limit = pg.ret.s; let page = pg.ret.p; let totalRecords = filteredReturns.length;
         let sliced = limit === 'all' ? filteredReturns : filteredReturns.slice((page-1)*limit, page*limit);
+        let startIndex = limit === 'all' ? 0 : (page - 1) * limit;
 
-        document.querySelector('#returnTable tbody').innerHTML = sliced.map(r => {
+        document.querySelector('#returnTable tbody').innerHTML = sliced.map((r, i) => {
             let p = data.parties.find(x => x.id === r.partyId); let origT = data.transactions.find(x => x.id === r.transId);
-            return `<tr><td><strong>${r.date}</strong></td><td>${p?p.name:'-'}</td><td><span style="color:#6b7280;">${r.billDate}</span></td><td><span style="font-size:11px; background:#e5e7eb; padding:2px 5px; border-radius:4px;">${origT?origT.batch:'-'}</span></td><td>${r.item}</td><td class="text-center" style="font-weight:bold;">${r.qty}</td><td class="text-right text-danger" style="font-weight:bold;">${r.loss.toFixed(2)}</td></tr>`;
+            return `<tr><td>${startIndex + i + 1}</td><td><strong>${r.date}</strong></td><td>${p?p.name:'-'}</td><td><span style="color:#6b7280;">${r.billDate}</span></td><td><span style="font-size:11px; background:#e5e7eb; padding:2px 5px; border-radius:4px;">${origT?origT.batch:'-'}</span></td><td>${r.item}</td><td class="text-center" style="font-weight:bold;">${r.qty}</td><td class="text-right text-danger" style="font-weight:bold;">${r.loss.toFixed(2)}</td></tr>`;
         }).join('');
         
-        document.getElementById('returnFoot').innerHTML = `<tr><td colspan="5" class="text-right">Total Returns:</td><td class="text-center">${totQty}</td><td class="text-right text-danger">${totLoss.toFixed(2)}</td></tr>`;
+        document.getElementById('returnFoot').innerHTML = `<tr><td colspan="6" class="text-right">Total Returns:</td><td class="text-center">${totQty}</td><td class="text-right text-danger">${totLoss.toFixed(2)}</td></tr>`;
         document.getElementById('returnSummary').innerText = `Total Returns Loss: Rs. ${totLoss.toFixed(2)}`;
         document.getElementById('retPagination').innerHTML = buildPagination(totalRecords, page, limit, 'ret');
     }
@@ -1075,14 +1113,15 @@
         
         let limit = pg.m.s; let page = pg.m.p; let totalRecords = rows.length;
         let sliced = limit === 'all' ? rows : rows.slice((page-1)*limit, page*limit);
+        let startIndex = limit === 'all' ? 0 : (page - 1) * limit;
 
         let html = '';
-        sliced.forEach(r => {
-            html += `<tr><td style="font-weight:600;">${r.dStr}</td><td class="text-center">${r.dTypes.Oyster}</td><td class="text-center">${r.dTypes.Abalone}</td><td class="text-center">${r.dTypes.Milki}</td><td class="text-center">${r.dTypes.Dry}</td><td class="text-center">${r.dTypes.Other}</td><td class="text-center text-danger">${r.dTypes.Ret}</td><td class="text-right" style="color:${r.dSale>0?'var(--primary)':''}">${r.dSale.toFixed(2)}</td><td class="text-right" style="color:var(--success); font-weight:bold;">${r.dRec.toFixed(2)}</td><td class="text-right" style="color:var(--info); font-weight:bold;">${r.dDueAmt.toFixed(2)}</td><td class="text-right" style="color:${r.dPur>0?'var(--danger)':''}">${r.dPur.toFixed(2)}</td><td class="text-right" style="color:var(--warning);">${r.dPaidOut.toFixed(2)}</td><td class="text-right text-danger">${r.dExpDay.toFixed(2)}</td></tr>`;
+        sliced.forEach((r, i) => {
+            html += `<tr><td>${startIndex + i + 1}</td><td style="font-weight:600;">${r.dStr}</td><td class="text-center">${r.dTypes.Oyster}</td><td class="text-center">${r.dTypes.Abalone}</td><td class="text-center">${r.dTypes.Milki}</td><td class="text-center">${r.dTypes.Dry}</td><td class="text-center">${r.dTypes.Other}</td><td class="text-center text-danger">${r.dTypes.Ret}</td><td class="text-right" style="color:${r.dSale>0?'var(--primary)':''}">${r.dSale.toFixed(2)}</td><td class="text-right" style="color:var(--success); font-weight:bold;">${r.dRec.toFixed(2)}</td><td class="text-right" style="color:var(--info); font-weight:bold;">${r.dDueAmt.toFixed(2)}</td><td class="text-right" style="color:${r.dPur>0?'var(--danger)':''}">${r.dPur.toFixed(2)}</td><td class="text-right" style="color:var(--warning);">${r.dPaidOut.toFixed(2)}</td><td class="text-right text-danger">${r.dExpDay.toFixed(2)}</td></tr>`;
         });
 
         document.querySelector('#monthTable tbody').innerHTML = html;
-        document.getElementById('monthFoot').innerHTML = `<tr><td class="text-right">Totals:</td><td class="text-center">${mTypes.Oyster}</td><td class="text-center">${mTypes.Abalone}</td><td class="text-center">${mTypes.Milki}</td><td class="text-center">${mTypes.Dry}</td><td class="text-center">${mTypes.Other}</td><td class="text-center text-danger">${mTypes.Ret}</td><td class="text-right">${mSale.toFixed(2)}</td><td class="text-right" style="color:var(--success);">${mRec.toFixed(2)}</td><td class="text-right" style="color:var(--info);">${mDue.toFixed(2)}</td><td class="text-right">${mPur.toFixed(2)}</td><td class="text-right">${mPaidOut.toFixed(2)}</td><td class="text-right text-danger">${mExp.toFixed(2)}</td></tr>`;
+        document.getElementById('monthFoot').innerHTML = `<tr><td colspan="2" class="text-right">Totals:</td><td class="text-center">${mTypes.Oyster}</td><td class="text-center">${mTypes.Abalone}</td><td class="text-center">${mTypes.Milki}</td><td class="text-center">${mTypes.Dry}</td><td class="text-center">${mTypes.Other}</td><td class="text-center text-danger">${mTypes.Ret}</td><td class="text-right">${mSale.toFixed(2)}</td><td class="text-right" style="color:var(--success);">${mRec.toFixed(2)}</td><td class="text-right" style="color:var(--info);">${mDue.toFixed(2)}</td><td class="text-right">${mPur.toFixed(2)}</td><td class="text-right">${mPaidOut.toFixed(2)}</td><td class="text-right text-danger">${mExp.toFixed(2)}</td></tr>`;
         document.getElementById('mPagination').innerHTML = buildPagination(totalRecords, page, limit, 'm');
 
         document.getElementById('monthSummaryCards').innerHTML = `
@@ -1153,9 +1192,10 @@
         
         let limit = pg.exp.s; let page = pg.exp.p; let totalRecords = filteredExp.length;
         let sliced = limit === 'all' ? filteredExp : filteredExp.slice((page-1)*limit, page*limit);
+        let startIndex = limit === 'all' ? 0 : (page - 1) * limit;
 
-        document.querySelector('#expenseTable tbody').innerHTML = sliced.map(e => { return `<tr><td><strong>${e.date}</strong></td><td><span style="font-size:11px; background:#e5e7eb; padding:2px 5px; border-radius:4px;">${e.batch||'-'}</span></td><td>${e.item}</td><td class="text-right">${e.rate}</td><td class="text-right">${e.qty}</td><td class="text-right text-danger" style="font-weight:bold">${parseFloat(e.total).toFixed(2)}</td><td class="text-center"><button class="btn btn-warning" style="padding:4px 8px; font-size:12px;" onclick="editExp('${e.id}')">E</button> <button class="btn btn-danger" style="padding:4px 8px; font-size:12px;" onclick="delExp('${e.id}')">X</button></td></tr>`; }).join('');
-        document.getElementById('expenseFoot').innerHTML = `<tr><td colspan="5" class="text-right">Total Expenses:</td><td class="text-right text-danger">${tot.toFixed(2)}</td><td></td></tr>`;
+        document.querySelector('#expenseTable tbody').innerHTML = sliced.map((e, i) => { return `<tr><td>${startIndex + i + 1}</td><td><strong>${e.date}</strong></td><td><span style="font-size:11px; background:#e5e7eb; padding:2px 5px; border-radius:4px;">${e.batch||'-'}</span></td><td>${e.item}</td><td class="text-right">${e.rate}</td><td class="text-right">${e.qty}</td><td class="text-right text-danger" style="font-weight:bold">${parseFloat(e.total).toFixed(2)}</td><td class="text-center"><button class="btn btn-warning" style="padding:4px 8px; font-size:12px;" onclick="editExp('${e.id}')">E</button> <button class="btn btn-danger" style="padding:4px 8px; font-size:12px;" onclick="delExp('${e.id}')">X</button></td></tr>`; }).join('');
+        document.getElementById('expenseFoot').innerHTML = `<tr><td colspan="6" class="text-right">Total Expenses:</td><td class="text-right text-danger">${tot.toFixed(2)}</td><td></td></tr>`;
         document.getElementById('expPagination').innerHTML = buildPagination(totalRecords, page, limit, 'exp');
     }
     function delExp(id) { if(confirm("මෙම වාර්තාව මකා දැමීමට අවශ්‍යද?")) { data.expenses = data.expenses.filter(x => x.id !== id); saveData(); renderExpenses(); updateGlobalBatches(false);} }
@@ -1223,41 +1263,45 @@
 
         // Party Table Build
         let tDel=0, tRet=0, tNet=0, tGross=0, tNetVal=0, tPaid=0, tDueAmt=0;
-        let sNames = [], sVals = []; let pRows = [];
+        let sNames = [], sVals = []; let pDataArr = [];
         
         for(let p_id in pStats) {
             let s = pStats[p_id];
             if(s.delQty > 0 || s.paid > 0 || s.grossValue > 0) {
+                pDataArr.push(s);
                 tDel+=s.delQty; tRet+=s.retQty; tNet+=s.netQty; tGross+=s.grossValue; tNetVal+=s.netValue; tPaid+=s.paid; tDueAmt+=s.due;
                 if(s.type === 'shop' && s.netValue > 0) { sNames.push(s.name); sVals.push(s.netValue); }
-                pRows.push(`<tr><td><strong>${s.name}</strong></td><td><span style="font-size:11px; background:#e5e7eb; padding:2px 5px; border-radius:4px;">${s.type}</span></td><td class="text-center">${s.delQty}</td><td class="text-center" style="color:var(--danger);">${s.retQty}</td><td class="text-center" style="font-weight:bold;">${s.netQty}</td><td class="text-right" style="color:#6b7280;">${s.grossValue.toFixed(2)}</td><td class="text-right" style="color:var(--primary); font-weight:bold;">${s.netValue.toFixed(2)}</td><td class="text-right" style="color:${s.type==='shop'?'var(--success)':'var(--warning)'}; font-weight:bold;">${s.paid.toFixed(2)}</td><td class="text-right" style="color:${s.due>0?'var(--danger)':'#1f2937'}; font-weight:bold;">${s.due.toFixed(2)}</td></tr>`);
             }
         }
         
-        let limit = pg.repParty.s; let page = pg.repParty.p; let totalRecords = pRows.length;
-        let sliced = limit === 'all' ? pRows : pRows.slice((page-1)*limit, page*limit);
+        let limit = pg.repParty.s; let page = pg.repParty.p; let totalRecords = pDataArr.length;
+        let sliced = limit === 'all' ? pDataArr : pDataArr.slice((page-1)*limit, page*limit);
+        let startIndex = limit === 'all' ? 0 : (page - 1) * limit;
 
-        document.querySelector('#reportPartyTable tbody').innerHTML = sliced.join('');
-        document.getElementById('reportPartyFoot').innerHTML = `<tr><td colspan="2" class="text-right">GRAND TOTALS:</td><td class="text-center">${tDel}</td><td class="text-center" style="color:var(--danger);">${tRet}</td><td class="text-center">${tNet}</td><td class="text-right">${tGross.toFixed(2)}</td><td class="text-right" style="color:var(--primary);">${tNetVal.toFixed(2)}</td><td class="text-right">${tPaid.toFixed(2)}</td><td class="text-right" style="color:var(--danger);">${tDueAmt.toFixed(2)}</td></tr>`;
+        let htmlRows = sliced.map((s, i) => {
+            return `<tr><td>${startIndex + i + 1}</td><td><strong>${s.name}</strong></td><td><span style="font-size:11px; background:#e5e7eb; padding:2px 5px; border-radius:4px;">${s.type}</span></td><td class="text-center">${s.delQty}</td><td class="text-center" style="color:var(--danger);">${s.retQty}</td><td class="text-center" style="font-weight:bold;">${s.netQty}</td><td class="text-right" style="color:#6b7280;">${s.grossValue.toFixed(2)}</td><td class="text-right" style="color:var(--primary); font-weight:bold;">${s.netValue.toFixed(2)}</td><td class="text-right" style="color:${s.type==='shop'?'var(--success)':'var(--warning)'}; font-weight:bold;">${s.paid.toFixed(2)}</td><td class="text-right" style="color:${s.due>0?'var(--danger)':'#1f2937'}; font-weight:bold;">${s.due.toFixed(2)}</td></tr>`;
+        });
+        document.querySelector('#reportPartyTable tbody').innerHTML = htmlRows.join('');
+        document.getElementById('reportPartyFoot').innerHTML = `<tr><td colspan="3" class="text-right">GRAND TOTALS:</td><td class="text-center">${tDel}</td><td class="text-center" style="color:var(--danger);">${tRet}</td><td class="text-center">${tNet}</td><td class="text-right">${tGross.toFixed(2)}</td><td class="text-right" style="color:var(--primary);">${tNetVal.toFixed(2)}</td><td class="text-right">${tPaid.toFixed(2)}</td><td class="text-right" style="color:var(--danger);">${tDueAmt.toFixed(2)}</td></tr>`;
         document.getElementById('repPartyPagination').innerHTML = buildPagination(totalRecords, page, limit, 'repParty');
 
         // Type Table Build (Sales)
-        let tH = ''; let ttSold = 0, ttRs = 0;
+        let tH = ''; let ttSold = 0, ttRs = 0; let sIdx = 1;
         for(let k in typeStats) {
             ttSold += typeStats[k].netQty; ttRs += typeStats[k].netRs;
-            tH += `<tr><td><strong>${k}</strong></td><td class="text-center" style="font-weight:bold;">${typeStats[k].netQty}</td><td class="text-right" style="font-weight:bold; color:var(--primary);">Rs. ${typeStats[k].netRs.toFixed(2)}</td></tr>`;
+            tH += `<tr><td>${sIdx++}</td><td><strong>${k}</strong></td><td class="text-center" style="font-weight:bold;">${typeStats[k].netQty}</td><td class="text-right" style="font-weight:bold; color:var(--primary);">Rs. ${typeStats[k].netRs.toFixed(2)}</td></tr>`;
         }
         document.querySelector('#reportTypeTable tbody').innerHTML = tH;
-        document.getElementById('reportTypeFoot').innerHTML = `<tr><td class="text-right">Total:</td><td class="text-center">${ttSold}</td><td class="text-right">Rs. ${ttRs.toFixed(2)}</td></tr>`;
+        document.getElementById('reportTypeFoot').innerHTML = `<tr><td colspan="2" class="text-right">Total:</td><td class="text-center">${ttSold}</td><td class="text-right">Rs. ${ttRs.toFixed(2)}</td></tr>`;
 
         // Pur Type Table Build (Suppliers)
-        let pH = ''; let ptSold = 0, ptRs = 0;
+        let pH = ''; let ptSold = 0, ptRs = 0; let pIdx = 1;
         for(let k in purTypeStats) {
             ptSold += purTypeStats[k].netQty; ptRs += purTypeStats[k].netRs;
-            pH += `<tr><td><strong>${k}</strong></td><td class="text-center" style="font-weight:bold;">${purTypeStats[k].netQty}</td><td class="text-right" style="font-weight:bold; color:var(--danger);">Rs. ${purTypeStats[k].netRs.toFixed(2)}</td></tr>`;
+            pH += `<tr><td>${pIdx++}</td><td><strong>${k}</strong></td><td class="text-center" style="font-weight:bold;">${purTypeStats[k].netQty}</td><td class="text-right" style="font-weight:bold; color:var(--danger);">Rs. ${purTypeStats[k].netRs.toFixed(2)}</td></tr>`;
         }
         document.querySelector('#reportPurTypeTable tbody').innerHTML = pH;
-        document.getElementById('reportPurTypeFoot').innerHTML = `<tr><td class="text-right">Total:</td><td class="text-center">${ptSold}</td><td class="text-right">Rs. ${ptRs.toFixed(2)}</td></tr>`;
+        document.getElementById('reportPurTypeFoot').innerHTML = `<tr><td colspan="2" class="text-right">Total:</td><td class="text-center">${ptSold}</td><td class="text-right">Rs. ${ptRs.toFixed(2)}</td></tr>`;
 
         // --- Data Prep for NEW BATCH LINE CHART ---
         let batchData = {};
@@ -1333,7 +1377,7 @@
     }
     function renderNotes() {
         let tbody = document.querySelector('#notesTable tbody');
-        tbody.innerHTML = data.notes.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(n => `<tr><td><strong>${n.date}</strong></td><td>${n.text}</td><td><span style="color:${n.alarm==='on'?'var(--success)':'#6b7280'}; font-weight:bold;">${n.alarm.toUpperCase()}</span></td><td class="text-center"><button class="btn btn-danger" style="padding:4px 8px;" onclick="delNote('${n.id}')">X</button></td></tr>`).join('');
+        tbody.innerHTML = data.notes.sort((a,b)=>new Date(b.date)-new Date(a.date)).map((n, i) => `<tr><td>${i+1}</td><td><strong>${n.date}</strong></td><td>${n.text}</td><td><span style="color:${n.alarm==='on'?'var(--success)':'#6b7280'}; font-weight:bold;">${n.alarm.toUpperCase()}</span></td><td class="text-center"><button class="btn btn-danger" style="padding:4px 8px;" onclick="delNote('${n.id}')">X</button></td></tr>`).join('');
     }
     function delNote(id) { data.notes = data.notes.filter(x => x.id !== id); saveData(); renderNotes(); }
 
@@ -1370,10 +1414,11 @@
     function resetData() { if(confirm("අවවාදයයි! සියලුම දත්ත මැකී යනු ඇත. විශ්වාසද?")) { if(confirm("ඔබට 100% විශ්වාසද?")) { localStorage.removeItem('mush_data_v10'); location.reload(); } } }
 </script>
 
-<!-- FIREBASE AUTHENTICATION SCRIPT -->
+<!-- FIREBASE AUTHENTICATION & FIRESTORE SCRIPT -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCy11loO6ZTeSh8U15pjrHqJz54qc0d1D4",
@@ -1386,6 +1431,19 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Enable Offline Data Capabilities in Firebase
+    enableIndexedDbPersistence(db).catch((err) => {
+        console.log("Offline persistence error:", err.code);
+    });
+
+    const dataDocRef = doc(db, "erp_system", "v10_data");
+
+    // Send local changes to Firebase
+    window.syncToFirebase = function(appData) {
+        setDoc(dataDocRef, appData, {merge: false}).catch(e => console.error("Error saving to Firebase:", e));
+    };
 
     window.attemptLogin = function() {
         const email = document.getElementById('loginEmail').value;
@@ -1413,6 +1471,22 @@
     onAuthStateChanged(auth, (user) => {
         if (user && user.email === "tharindum2022@gmail.com") {
             document.getElementById('loginOverlay').style.display = 'none';
+
+            // Start Realtime Data Auto-Sync Listener
+            onSnapshot(dataDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    let fbData = docSnap.data();
+                    if(window.updateDataFromFirebase) {
+                        window.updateDataFromFirebase(fbData);
+                    }
+                } else {
+                    // Initialize Firestore with local data if document is empty
+                    if(window.getAppData) {
+                        window.syncToFirebase(window.getAppData());
+                    }
+                }
+            });
+
         } else {
             document.getElementById('loginOverlay').style.display = 'flex';
         }
