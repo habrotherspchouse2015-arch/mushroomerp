@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUNA FOOD - ERP System V10.5 (Stable)</title>
+    <title>LUNA FOOD - ERP System V10.9 (Stable)</title>
     <!-- MUSHROOM FAVICON ADDED -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍄</text></svg>">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -23,7 +23,7 @@
         }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--bg); color: var(--text); margin: 0; padding: 0; font-size: 14px; }
-        .header { background-color: var(--primary); color: var(--white); padding: 15px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { background-color: var(--primary); color: var(--white); padding: 15px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position:relative; display:flex; justify-content:center; align-items:center;}
         .container { max-width: 1350px; margin: 20px auto; background: var(--white); padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         
         .global-filter { background:#eef2ff; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c7d2fe; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
@@ -68,7 +68,7 @@
         .pagination-container { display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:5px; font-size:13px; flex-wrap:wrap; gap:10px; }
         
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index: 1000;}
-        .modal-content { background:white; padding:25px; border-radius:8px; width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);}
+        .modal-content { background:white; padding:25px; border-radius:8px; width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto;}
         .modal-header { font-size: 18px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; color: var(--primary);}
         .price-note { font-size: 11px; color: var(--danger); margin-top: 4px; font-weight: 600;}
         .date-link { color: var(--primary-light); text-decoration: underline; cursor: pointer; font-weight: bold; }
@@ -88,7 +88,7 @@
 <!-- FIREBASE LOGIN OVERLAY -->
 <div id="loginOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:9999; display:flex; align-items:center; justify-content:center;">
     <div style="background:white; padding:40px; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.1); width:90%; max-width:400px; text-align:center;">
-        <h2 style="color:var(--primary); margin-top:0;">LUNA FOOD ERP</h2>
+        <h2 style="color:var(--primary); margin-top:0;">🍄 LUNA FOOD ERP</h2>
         <p style="color:#6b7280; margin-bottom:25px; font-size:13px;">Secure System Login</p>
         <div class="form-group" style="text-align:left; margin-bottom:15px;">
             <label>Email Address</label>
@@ -104,7 +104,8 @@
 </div>
 
 <div class="header">
-    <h1>LUNA FOOD - ERP Management System V10.5</h1>
+    <h1>LUNA FOOD - ERP Management System V10.9</h1>
+    <button onclick="systemLogout()" class="btn btn-danger" id="logoutBtn" style="display:none; position:absolute; right:20px;">🚪 Logout</button>
 </div>
 
 <div class="container">
@@ -123,10 +124,11 @@
             </select>
         </div>
         <div style="font-size: 11.5px; color: #475569; max-width: 400px; line-height: 1.4; font-weight:600;">
-            මෙතැනින් තෝරන Year / Batch එක මුළු පද්ධතියටම එකවර අදාළ වේ. (තෝරා නැත / None දැමූ විට Manual Date භාවිතා කළ හැක).
+            මෙතැනින් තෝරන Year / Batch එක මුළු පද්ධතියටම එකවර අදාළ වේ. 
         </div>
     </div>
 
+    <!-- TABS -->
     <div class="tabs">
         <button class="tab-btn active" onclick="openTab('RegTab')">ලියාපදිංචිය (Reg)</button>
         <button class="tab-btn" onclick="openTab('EntryTab')">දෛනික දත්ත (Entry)</button>
@@ -135,6 +137,7 @@
         <button class="tab-btn" onclick="openTab('MonthTab')">දෛනික එකතුව (Day-by-Day)</button>
         <button class="tab-btn" onclick="openTab('ExpenseTab')">වියදම් (Expenses)</button>
         <button class="tab-btn" onclick="openTab('ReportTab')">ERP Reports</button>
+        <button class="tab-btn" onclick="openTab('PaymentTab')" style="background-color:#dbeafe; color:#1e3a8a; border:1px solid #bfdbfe;">ගෙවීම් ඉතිහාසය (Payments)</button>
         <button class="tab-btn" onclick="openTab('NotesTab')">සටහන් (Reminders)</button>
         <button class="tab-btn" onclick="openTab('SettingsTab')">සැකසුම් (Settings)</button>
     </div>
@@ -214,7 +217,7 @@
             <div class="form-group">
                 <label>කාණ්ඩය (Batch Filter)</label>
                 <select id="ledgerBatchF" onchange="autoSetDates('ledger')">
-                    <option value="">All (සියලුම)</option><option value="Batch 01">Batch 01</option><option value="Batch 02">Batch 02</option><option value="Batch 03">Batch 03</option><option value="Batch 04">Batch 04</option>
+                    <option value="">All (සියලුම)</option>
                 </select>
             </div>
             <div class="form-group"><label>පාර්ශවය (Select Party)</label><select id="ledgerParty" onchange="renderLedger()"></select></div>
@@ -245,7 +248,7 @@
             <div class="form-group">
                 <label>කාණ්ඩය (Batch Filter)</label>
                 <select id="retBatchF" onchange="autoSetDates('ret')">
-                    <option value="">All (සියලුම)</option><option value="Batch 01">Batch 01</option><option value="Batch 02">Batch 02</option><option value="Batch 03">Batch 03</option><option value="Batch 04">Batch 04</option>
+                    <option value="">All (සියලුම)</option>
                 </select>
             </div>
             <div class="form-group"><label>පාර්ශවය (Select Party)</label><select id="retParty" onchange="renderReturns()"></select></div>
@@ -274,7 +277,7 @@
             <div class="form-group">
                 <label>Batch</label>
                 <select id="mBatchF" onchange="autoSetDates('m')">
-                    <option value="">All</option><option value="Batch 01">Batch 01</option><option value="Batch 02">Batch 02</option><option value="Batch 03">Batch 03</option>
+                    <option value="">All</option>
                 </select>
             </div>
             <div class="form-group"><label>පාර්ශවය (Party Filter)</label><select id="mParty" onchange="renderMonth()"></select></div>
@@ -354,7 +357,7 @@
             <div class="form-group">
                 <label>Batch</label>
                 <select id="repBatchF" onchange="autoSetDates('rep')">
-                    <option value="">All</option><option value="Batch 01">Batch 01</option><option value="Batch 02">Batch 02</option><option value="Batch 03">Batch 03</option>
+                    <option value="">All</option>
                 </select>
             </div>
             <div class="form-group"><label>පාර්ශවය (Party Filter)</label><select id="repParty" onchange="renderReports()"></select></div>
@@ -426,6 +429,11 @@
             </div>
         </div>
 
+        <!-- NEW BATCH LINE CHART -->
+        <div style="background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); position:relative; min-height: 450px; margin-top:30px;">
+            <canvas id="batchLineChart"></canvas>
+        </div>
+
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-top:30px;">
             <div style="background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); position:relative; min-height: 450px;">
                 <canvas id="pieChart"></canvas>
@@ -434,14 +442,56 @@
                 <canvas id="shopChart"></canvas>
             </div>
         </div>
+    </div>
 
-        <!-- NEW BATCH LINE CHART -->
-        <div style="background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); position:relative; min-height: 450px; margin-top:30px;">
-            <canvas id="batchLineChart"></canvas>
+    <!-- 8. NEW: Payment History Tab -->
+    <div id="PaymentTab" class="tab-content">
+        <h2>ගෙවීම් ඉතිහාසය සහ පාලනය (Payment Management)</h2>
+        <div class="summary-card" style="background:#e0f2fe; border-left-color:var(--primary);">මෙතැනින් තෝරාගත් වර්ෂය, කාණ්ඩය සහ කඩයට අදාළ සියලුම ගෙවීම් (තනි සහ එකවර/Bulk) වෙන වෙනම පරීක්ෂා කිරීම, සංස්කරණය කිරීම සහ මැකීම සිදුකළ හැක. තොරතුරු බැලීමට අනිවාර්යයෙන්ම පහතින් <strong>Year -> Batch -> Party</strong> අනුපිළිවෙලටම තෝරන්න.</div>
+        
+        <div style="background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05); margin-top:15px; border:1px solid #e5e7eb;">
+            <div class="form-grid" style="background: #f8fafc; padding: 15px; border-radius: 5px; margin-bottom:15px; border:1px solid #cbd5e1;">
+                <div class="form-group">
+                    <label>1. වර්ෂය (Year)</label>
+                    <select id="payHistYear" onchange="payHistYearChanged()" style="border:1px solid var(--primary-light);">
+                        <option value="none">-- වර්ෂය (Year) --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>2. කාණ්ඩය (Batch)</label>
+                    <select id="payHistBatch" onchange="payHistBatchChanged()" style="border:1px solid var(--primary-light);">
+                        <option value="none">-- පළමුව වර්ෂය තෝරන්න --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>3. පාර්ශවය (Party) *</label>
+                    <select id="payHistParty" onchange="renderPaymentHistory()" style="border:1px solid var(--primary-light); font-weight:bold;">
+                        <option value="none">-- පළමුව කාණ්ඩය තෝරන්න --</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn btn-excel" onclick="exportTableToCSV('reportPayTable', 'Payment_History.csv')" style="font-size:12px; margin-bottom:15px;">📥 Export Payments Data</button>
+            <div style="overflow-x:auto;">
+                <table id="reportPayTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Date (දිනය)</th>
+                            <th>Party Name (කඩයේ නම)</th>
+                            <th>Payment Type (වර්ගය)</th>
+                            <th>Amount (මුදල Rs)</th>
+                            <th class="text-center">Action (වෙනස් කිරීම්)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot id="reportPayFoot"></tfoot>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- 8. Notes Tab -->
+    <!-- 9. Notes Tab -->
     <div id="NotesTab" class="tab-content">
         <h2>දිනපොත සහ සිහිකැඳවීම් (Note Book & Reminders)</h2>
         <div class="form-grid" style="background:#fefce8; padding:15px; border-radius:5px; border:1px solid #fef08a;">
@@ -456,7 +506,7 @@
         </table>
     </div>
 
-    <!-- 9. Settings Tab -->
+    <!-- 10. Settings Tab -->
     <div id="SettingsTab" class="tab-content">
         <h2>සැකසුම් (Data Backup & Restore)</h2>
         <div class="summary-card">මෙමගින් ඔබගේ දත්ත දුරකථනයට හෝ පරිගණකයට සුරක්ෂිතව බාගත කරගත හැක.</div>
@@ -481,8 +531,25 @@
 <div id="bulkPayModal" class="modal"><div class="modal-content"><div class="modal-header">එකවර ගෙවීම (Bulk Payment)</div><div class="form-group"><label>Date</label><input type="date" id="bulkPayDate"></div><div class="form-group"><label>Total Amount (Rs)</label><input type="number" id="bulkPayAmount" style="font-size:18px; font-weight:bold; color:var(--success);"></div><div style="margin-top:20px; text-align:right;"><button class="btn btn-danger" onclick="closeModal('bulkPayModal')">Cancel</button><button class="btn btn-info" onclick="confirmBulkPay()">Apply Payment</button></div></div></div>
 <div id="reminderModal" class="modal"><div class="modal-content"><div class="modal-header" style="color:var(--warning);">🔔 අද දිනට අදාල සිහිකැඳවීම් (Today's Reminders)</div><div id="reminderItems"></div><div style="margin-top:20px; text-align:right;"><button class="btn btn-warning" onclick="closeModal('reminderModal')">Close</button></div></div></div>
 
+<!-- NEW MODAL FOR EDITING BULK/GROUPED PAYMENT DATE -->
+<div id="editPayGroupModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">ගෙවීම් දිනය සංස්කරණය (Edit Payment Date)</div>
+        <p style="font-size:12px; color:var(--danger); margin-top:-10px; margin-bottom:15px; font-weight:bold;">මුදල (Amount) වෙනස් කිරීමට අවශ්‍ය නම්, කරුණාකර මෙම ගෙවීම X බොත්තම මගින් මකා දමා නැවත අලුතින් ඇතුලත් කරන්න.</p>
+        <input type="hidden" id="editPayGrpData">
+        <div class="form-group">
+            <label>නව දිනය (New Date)</label>
+            <input type="date" id="editPayGrpDate">
+        </div>
+        <div style="margin-top:20px; text-align:right;">
+            <button class="btn btn-danger" onclick="closeModal('editPayGroupModal')">Cancel</button>
+            <button class="btn btn-success" onclick="saveGroupedPaymentEdit()">Update Date</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // --- ERP System State V10.5 ---
+    // --- ERP System State V10.9 ---
     let data = JSON.parse(localStorage.getItem('mush_data_v10')) || 
                JSON.parse(localStorage.getItem('mush_data_v9')) || 
                JSON.parse(localStorage.getItem('mush_data_v8')) || 
@@ -493,7 +560,9 @@
     const itemTypes = ['Oyster', 'Abalone', 'Milki', 'Dry', 'Other'];
     let shopChartInstance = null; let pieChartInstance = null; let batchLineChartInstance = null;
 
-    // Firebase Hooks for Offline & Sync Data Update
+    // GLOBAL VARIABLE FOR SAFE PAYMENT EDITING
+    window.currentPaymentHistory = [];
+
     window.getAppData = function() { return data; };
     window.updateDataFromFirebase = function(fbData) {
         data = fbData;
@@ -505,9 +574,8 @@
         if (!data.returns) data.returns = [];
         
         localStorage.setItem('mush_data_v10', JSON.stringify(data));
-        updateDropdowns();
+        updateDropdowns(); 
         
-        // Re-render active tab based on new data
         let activeTab = document.querySelector('.tab-content.active');
         if(activeTab) {
             let id = activeTab.id;
@@ -516,21 +584,14 @@
             if(id === 'MonthTab') renderMonth();
             if(id === 'ExpenseTab') renderExpenses();
             if(id === 'ReportTab') renderReports();
+            if(id === 'PaymentTab' && window.renderPaymentHistory) window.renderPaymentHistory();
             if(id === 'ReturnTab') renderReturns();
             if(id === 'NotesTab') renderNotes();
         }
     };
 
-    // --- Pagination State ---
-    let pg = {
-        ledger: { p: 1, s: 30 },
-        ret: { p: 1, s: 30 },
-        m: { p: 1, s: 30 },
-        exp: { p: 1, s: 30 },
-        repParty: { p: 1, s: 30 }
-    };
+    let pg = { ledger: { p: 1, s: 30 }, ret: { p: 1, s: 30 }, m: { p: 1, s: 30 }, exp: { p: 1, s: 30 }, repParty: { p: 1, s: 30 } };
 
-    // --- Date Format Helper ---
     function getLocalYYYYMMDD(dateObj) {
         let y = dateObj.getFullYear();
         let m = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -538,10 +599,8 @@
         return `${y}-${m}-${d}`;
     }
 
-    // --- Init ---
     let todayObj = new Date();
     let todayStr = getLocalYYYYMMDD(todayObj);
-    
     let past30Obj = new Date(); 
     past30Obj.setDate(past30Obj.getDate() - 30);
     let past30Str = getLocalYYYYMMDD(past30Obj);
@@ -557,12 +616,9 @@
         if(document.getElementById(prefix+'StartDate')) document.getElementById(prefix+'StartDate').value = past30Str;
         if(document.getElementById(prefix+'EndDate')) document.getElementById(prefix+'EndDate').value = todayStr;
     });
-    
-    initYears(); updateDropdowns(); renderParties(); buildEntryTable(); checkReminders();
-    updateGlobalBatches(false); 
 
     function initYears() {
-        let yArr = ['globalYear', 'entryYear', 'ledgerYearF', 'mYearF', 'repYearF', 'retYearF', 'expYear', 'expYearF'];
+        let yArr = ['globalYear', 'entryYear', 'ledgerYearF', 'mYearF', 'repYearF', 'retYearF', 'expYear', 'expYearF', 'payHistYear'];
         let curY = new Date().getFullYear();
         let opts = '';
         for(let y = 2024; y <= 2045; y++) { opts += `<option value="${y}" ${y === curY ? 'selected' : ''}>${y}</option>`; }
@@ -571,25 +627,30 @@
             if(el) { 
                 if(id === 'globalYear') {
                     el.innerHTML = '<option value="none" selected>-- තෝරා නැත (None) --</option>' + opts.replace(/selected/g, '');
+                } else if(id === 'payHistYear') {
+                    el.innerHTML = '<option value="none" selected>-- වර්ෂය (Year) --</option>' + opts.replace(/selected/g, '');
+                } else if(id === 'entryYear' || id === 'expYear') {
+                    el.innerHTML = opts; 
+                } else {
+                    el.innerHTML = '<option value="">All Years (සියලුම)</option>' + opts; 
                 }
-                else if(id === 'entryYear' || id === 'expYear') el.innerHTML = opts; 
-                else el.innerHTML = '<option value="">All Years (සියලුම)</option>' + opts; 
             }
         });
     }
 
-    // MODIFIED saveData: also trigger Firebase sync
+    initYears(); updateDropdowns(); renderParties(); buildEntryTable(); checkReminders();
+    updateGlobalBatches(false); 
+    if(window.updatePayHistBatch) window.updatePayHistBatch();
+
     function saveData() { 
         localStorage.setItem('mush_data_v10', JSON.stringify(data)); 
-        if(window.syncToFirebase) {
-            window.syncToFirebase(data);
-        }
+        if(window.syncToFirebase) window.syncToFirebase(data);
     }
 
-    // --- GLOBAL FILTER LOGIC ---
     function updateGlobalBatches(triggerApply = true) {
         let y = document.getElementById('globalYear').value;
         let gb = document.getElementById('globalBatch');
+        let currentVal = gb.value;
         
         if (y === 'none' || y === '') {
             gb.innerHTML = '<option value="">All Batches (සියලුම)</option>';
@@ -598,14 +659,22 @@
         } else {
             gb.disabled = false;
             let batches = new Set();
-            data.transactions.forEach(t => {
-                if(t.batch && t.batch.startsWith(y + '-')) batches.add(t.batch.split('-').slice(1).join('-'));
-            });
-            data.expenses.forEach(e => {
-                if(e.batch && e.batch.startsWith(y + '-')) batches.add(e.batch.split('-').slice(1).join('-'));
+            
+            let allBatchRaw = [];
+            data.transactions.forEach(t => { if(t.batch) allBatchRaw.push(String(t.batch).trim()); });
+            if(data.expenses) data.expenses.forEach(e => { if(e.batch) allBatchRaw.push(String(e.batch).trim()); });
+
+            allBatchRaw.forEach(batchStr => {
+                if (!batchStr) return;
+                if (batchStr.includes(y)) {
+                    let name = batchStr.replace(y, '').replace(/^[-\/\s]+|[-\/\s]+$/g, '').trim();
+                    if (name) batches.add(name);
+                    else batches.add(batchStr);
+                } else if (!/\d{4}/.test(batchStr)) {
+                    batches.add(batchStr);
+                }
             });
             
-            let currentVal = gb.value;
             gb.innerHTML = '<option value="">All Batches (සියලුම)</option>';
             Array.from(batches).sort().forEach(b => { gb.innerHTML += `<option value="${b}">${b}</option>`; });
             
@@ -616,6 +685,236 @@
         if(triggerApply) applyGlobalFilter();
     }
 
+    // ----- 100% BULLETPROOF PAYMENT HISTORY FILTERS & RENDER LOGIC -----
+
+    window.payHistYearChanged = function() {
+        updatePayHistBatch();
+        updatePayHistParty();
+        renderPaymentHistory();
+    };
+
+    window.payHistBatchChanged = function() {
+        updatePayHistParty();
+        renderPaymentHistory();
+    };
+
+    window.updatePayHistBatch = function() {
+        let y = document.getElementById('payHistYear').value;
+        let bSelect = document.getElementById('payHistBatch');
+        let currentB = bSelect.value;
+        
+        bSelect.innerHTML = '<option value="none">-- කාණ්ඩය (Batch) --</option>';
+        
+        if (!y || y === 'none') {
+            let pSelect = document.getElementById('payHistParty');
+            if (pSelect) pSelect.innerHTML = '<option value="none">-- පළමුව කාණ්ඩය තෝරන්න --</option>';
+            return;
+        }
+
+        let batches = new Set();
+        
+        // පද්ධතියේ තියෙන සියලුම Transactions වල Batch එක මේ අවුරුද්දට අදාළද බලනවා
+        data.transactions.forEach(t => { 
+            let b = t.batch ? String(t.batch).trim() : '';
+            if (b) {
+                if (b.includes(y)) {
+                    // "2024-Batch 01" වගේ තියෙනවා නම් "Batch 01" විතරක් ගන්නවා
+                    let name = b.replace(y, '').replace(/^[-\/\s]+|[-\/\s]+$/g, '').trim();
+                    if (name) batches.add(name);
+                } else if (!/\d{4}/.test(b)) {
+                    // අවුරුද්දක් නැති පරණ Batch එකක් නම් කෙලින්ම ගන්නවා
+                    batches.add(b);
+                }
+            }
+        });
+        
+        // Expenses වලටත් එහෙමමයි
+        data.expenses.forEach(e => { 
+            let b = e.batch ? String(e.batch).trim() : '';
+            if (b) {
+                if (b.includes(y)) {
+                    let name = b.replace(y, '').replace(/^[-\/\s]+|[-\/\s]+$/g, '').trim();
+                    if (name) batches.add(name);
+                } else if (!/\d{4}/.test(b)) {
+                    batches.add(b);
+                }
+            }
+        });
+
+        // ගත්ත සියලුම Batches ලැයිස්තුවට එකතු කරනවා
+        Array.from(batches).sort().forEach(b => {
+            bSelect.innerHTML += `<option value="${b}">${b}</option>`;
+        });
+
+        // කලින් තෝරපු එකම තියෙනවද බලලා ඒකම දානවා
+        if (Array.from(bSelect.options).some(o => o.value === currentB)) {
+            bSelect.value = currentB;
+        } else {
+            bSelect.value = 'none';
+        }
+        
+        if (window.updatePayHistParty) window.updatePayHistParty();
+    };
+
+    window.updatePayHistParty = function() {
+        let yF = document.getElementById('payHistYear').value;
+        let bF = document.getElementById('payHistBatch').value;
+        let pSelect = document.getElementById('payHistParty');
+        let currentP = pSelect.value;
+        
+        pSelect.innerHTML = '<option value="none">-- කඩය / පාර්ශවය තෝරන්න --</option>';
+        
+        if (!yF || yF === 'none' || !bF || bF === 'none') {
+            if (window.renderPaymentHistory) window.renderPaymentHistory();
+            return; 
+        }
+
+        // ඔබ ඉල්ලූ පරිදි, සිස්ටම් එකේ තියෙන සියලුම කඩවල් සහ සැපයුම්කරුවන් මෙතැනට load කරනවා.
+        data.parties.forEach(p => {
+            // (p.type === 'shop' ? 'Shop' : 'Supplier') මඟින් එය කඩයක්ද සැපයුම්කරුවෙක්ද කියා පෙන්වයි.
+            pSelect.innerHTML += `<option value="${p.id}">${p.name} (${p.type === 'shop' ? 'Shop' : 'Supplier'})</option>`;
+        });
+        
+        // කලින් තෝරපු එකම තියෙනවද බලලා ඒකම දානවා
+        if (Array.from(pSelect.options).some(o => o.value === currentP)) {
+            pSelect.value = currentP; 
+        } else {
+            pSelect.value = 'none';
+        }
+
+        if (window.renderPaymentHistory) window.renderPaymentHistory();
+    };
+
+    window.renderPaymentHistory = function() {
+        let yF = document.getElementById('payHistYear').value;
+        let bF = document.getElementById('payHistBatch').value;
+        let pid = document.getElementById('payHistParty').value;
+
+        let tbody = document.querySelector('#reportPayTable tbody');
+        let tfoot = document.getElementById('reportPayFoot');
+
+        // අනිවාර්යයෙන්ම 3ම තෝරා තිබිය යුතුයි
+        if (!yF || yF === 'none' || !bF || bF === 'none' || !pid || pid === 'none') {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="padding:25px; color:var(--danger); font-size:15px; font-weight:bold; background:#fef2f2;">දත්ත බැලීමට කරුණාකර ඉහතින් වර්ෂය (Year), කාණ්ඩය (Batch) සහ පාර්ශවය (Party) අනුපිළිවෙලින් තෝරන්න.</td></tr>`;
+            tfoot.innerHTML = `<tr><td colspan="4" class="text-right" style="font-size:15px;">මුළු ගෙවීම් (Total Payments):</td><td class="text-right" style="color:var(--success); font-weight:bold;">Rs. 0.00</td><td></td></tr>`;
+            return;
+        }
+
+        let allPays = [];
+
+        // පළමුව තේරූ කඩයට අදාළ සියලු ගෙවීම් ලබා ගැනීම (කඩවල් සහ සැපයුම්කරුවන් දෙගොල්ලොම මේකෙන් load වෙනවා)
+        data.transactions.forEach(t => {
+            if (String(t.partyId).trim() !== String(pid).trim()) return;
+
+            let b = t.batch ? String(t.batch).trim() : '';
+            let isBatchMatch = false;
+
+            // Batch එක ගැලපෙනවද බලනවා (Full match or partial match for old data)
+            if (b.startsWith(yF + '-') && b.includes(bF)) isBatchMatch = true;
+            else if (b === bF) isBatchMatch = true;
+            else if (b.includes(yF) && b.includes(bF)) isBatchMatch = true;
+
+            let tempHist = t.payHistory || [];
+            if (parseFloat(t.payment) > 0 && tempHist.length === 0) {
+                tempHist = [{ date: t.date, amount: parseFloat(t.payment), type: 'Daily Entry' }];
+            }
+
+            tempHist.forEach((ph) => {
+                let d = ph.date || t.date || '';
+                let include = false;
+
+                // තනි ගෙවීමක් නම් - අදාළ Batch එකට පමණක් අයිති විය යුතුයි
+                if (isBatchMatch && ph.type !== 'Bulk Pay Split') {
+                    include = true;
+                } 
+                // Bulk payment නම් - අදාළ Batch එකට අයිතිනම් හෝ අදාළ අවුරුද්දේ දුන් එකක් නම් පෙන්වනවා
+                else if (ph.type === 'Bulk Pay Split') {
+                    if (d.includes(yF) || isBatchMatch) {
+                        include = true;
+                    }
+                }
+
+                if (include) {
+                    let p = data.parties.find(x => String(x.id) === String(t.partyId));
+                    let cleanB = b;
+                    if (b.includes(yF)) cleanB = b.replace(yF, '').replace(/^[-\/\s]+|[-\/\s]+$/g, '').trim();
+
+                    allPays.push({
+                        transId: t.id,
+                        partyId: t.partyId,
+                        partyName: p ? p.name : 'Unknown',
+                        date: d,
+                        type: ph.type || 'Daily Entry',
+                        amount: parseFloat(ph.amount) || 0,
+                        batch: cleanB || b,
+                        isBatchMatch: isBatchMatch
+                    });
+                }
+            });
+        });
+
+        // ගෙවීම් සමූහ කිරීම (Grouping Bulk & Single)
+        let groupedPays = {};
+        allPays.forEach(pay => {
+            // එකවර ගෙවීම් (Bulk Pay Split) නම් එය සම්පූර්ණ එකතුවක් ලෙස පෙන්වීමට කාණ්ඩය නොසලකා හරියි
+            let gKey = pay.type === 'Bulk Pay Split' ? 
+                `${pay.partyId}_${pay.date}_${pay.type}` : 
+                `${pay.partyId}_${pay.date}_${pay.type}_${pay.transId}`;
+                
+            if(!groupedPays[gKey]) {
+                groupedPays[gKey] = {
+                    partyId: pay.partyId,
+                    partyName: pay.partyName,
+                    date: pay.date,
+                    type: pay.type,
+                    batch: pay.type === 'Bulk Pay Split' ? 'එකවර ගෙවීමක් (Bulk)' : pay.batch,
+                    amount: 0,
+                    transRefs: [],
+                    hasPrimaryMatch: false
+                };
+            }
+            groupedPays[gKey].amount += pay.amount;
+            groupedPays[gKey].transRefs.push({ transId: pay.transId, amount: pay.amount });
+            
+            // මෙම ගෙවීම අදාළ Batch එකට අයිති දැයි සටහන් කරගැනීම
+            if (pay.isBatchMatch) {
+                groupedPays[gKey].hasPrimaryMatch = true;
+            }
+        });
+
+        // අදාළ Batch එකට සම්බන්ධ වූ ගෙවීම් සමූහයන් පමණක් පෙන්වීම
+        let finalPays = Object.values(groupedPays).filter(g => g.hasPrimaryMatch).sort((a,b) => new Date(b.date) - new Date(a.date));
+        window.currentPaymentHistory = finalPays;
+
+        let payHtml = '';
+        let totalPayF = 0;
+
+        if(finalPays.length === 0) {
+            payHtml = `<tr><td colspan="6" class="text-center" style="padding:15px; color:#6b7280; font-weight:bold;">මෙම පාර්ශවය සඳහා අදාළ කාණ්ඩයේ ගෙවීම් කිසිවක් හමු නොවිණි. (No payments found)</td></tr>`;
+        } else {
+            finalPays.forEach((grp, i) => {
+                totalPayF += grp.amount;
+                let bgStyle = grp.type === 'Bulk Pay Split' ? 'background:#f0fdf4; border-left:3px solid var(--success);' : '';
+                
+                payHtml += `<tr style="${bgStyle}">
+                    <td>${i+1}</td>
+                    <td><strong style="color:var(--primary); font-size:14px;">${grp.date}</strong><br><span style="font-size:10px; color:#6b7280; background:#e5e7eb; padding:2px 4px; border-radius:3px;">${grp.batch}</span></td>
+                    <td style="font-weight:bold;">${grp.partyName}</td>
+                    <td><span style="font-size:11px; font-weight:bold; background:${grp.type==='Bulk Pay Split'?'#16a34a':'#e5e7eb'}; color:${grp.type==='Bulk Pay Split'?'#fff':'#000'}; padding:3px 6px; border-radius:4px;">${grp.type}</span></td>
+                    <td class="text-right" style="color:var(--success); font-size:15px; font-weight:bold;">Rs. ${grp.amount.toFixed(2)}</td>
+                    <td class="text-center">
+                        <button class="btn btn-warning" style="padding:4px 8px; font-size:12px; margin-right:5px;" onclick="editGroupedPayment(${i})">Edit (E)</button>
+                        <button class="btn btn-danger" style="padding:4px 8px; font-size:12px;" onclick="deleteGroupedPayment(${i})">Delete (X)</button>
+                    </td>
+                </tr>`;
+            });
+        }
+        tbody.innerHTML = payHtml;
+        tfoot.innerHTML = `<tr><td colspan="4" class="text-right" style="font-size:15px;">මුළු ගෙවීම් (Total Payments):</td><td class="text-right" style="color:var(--success); font-size:16px; font-weight:bold;">Rs. ${totalPayF.toFixed(2)}</td><td></td></tr>`;
+    };
+
+    // ----- GLOBAL FILTER & INTEGRATION -----
+
     function applyGlobalFilter() {
         let gy = document.getElementById('globalYear').value;
         let gb = document.getElementById('globalBatch').value;
@@ -624,49 +923,53 @@
         let localBatches = ['entryBatchList', 'ledgerBatchF', 'retBatchF', 'mBatchF', 'expBatchF', 'repBatchF', 'expBatchList'];
         
         if (gy === 'none' || gy === '') {
-            localYears.forEach(id => { 
-                let el = document.getElementById(id); 
-                if(el && id !== 'entryYear' && id !== 'expYear') el.value = '';
-            });
-            localBatches.forEach(id => { 
-                let el = document.getElementById(id); 
-                if(el && el.tagName === 'SELECT') el.value = '';
-                else if(el && el.tagName === 'INPUT') el.value = '';
-            });
-        } else {
-            localYears.forEach(id => { 
-                let el = document.getElementById(id); 
-                if(el) {
-                    if (id !== 'entryYear' && id !== 'expYear') el.value = gy;
-                    else el.value = gy;
-                } 
-            });
+            localYears.forEach(id => { let el = document.getElementById(id); if(el && id !== 'entryYear' && id !== 'expYear') el.value = ''; });
+            localBatches.forEach(id => { let el = document.getElementById(id); if(el && el.tagName === 'SELECT') el.value = ''; else if(el && el.tagName === 'INPUT') el.value = ''; });
             
+            // Payment History Sync (Reset)
+            let phYear = document.getElementById('payHistYear'); 
+            if(phYear) {
+                phYear.value = 'none';
+                if (window.updatePayHistBatch) window.updatePayHistBatch();
+            }
+            
+        } else {
+            localYears.forEach(id => { let el = document.getElementById(id); if(el) el.value = gy; });
             localBatches.forEach(id => { 
                 let el = document.getElementById(id); 
                 if(el) {
                     if(el.tagName === 'SELECT') {
                         if (gb !== '') {
                             let exists = Array.from(el.options).some(opt => opt.value === gb || opt.value === (gy+'-'+gb));
-                            if(!exists) {
-                                let opt = document.createElement('option'); opt.value = gb; opt.innerText = gb;
-                                el.appendChild(opt);
-                            }
+                            if(!exists) { let opt = document.createElement('option'); opt.value = gb; opt.innerText = gb; el.appendChild(opt); }
                         }
                         el.value = gb;
-                    } else {
-                        el.value = gb;
-                    }
+                    } else { el.value = gb; }
                 } 
             });
 
-            // Force Date Auto-Set on all report tabs when global filter changes
-            ['ledger', 'ret', 'm', 'exp', 'rep'].forEach(prefix => {
-                autoSetDates(prefix);
-            });
+            ['ledger', 'ret', 'm', 'exp', 'rep'].forEach(prefix => autoSetDates(prefix));
+
+            // Payment History Sync (Apply)
+            let phYear = document.getElementById('payHistYear'); 
+            if(phYear) phYear.value = gy;
+            
+            if (window.updatePayHistBatch) window.updatePayHistBatch();
+            
+            let phb = document.getElementById('payHistBatch');
+            if (phb && gb !== '') {
+                let exists = Array.from(phb.options).some(opt => opt.value === gb);
+                if (!exists) {
+                    let opt = document.createElement('option'); opt.value = gb; opt.innerText = gb;
+                    phb.appendChild(opt);
+                }
+                phb.value = gb;
+            } else if (phb) {
+                phb.value = 'none';
+            }
+            if (window.updatePayHistParty) window.updatePayHistParty();
         }
 
-        // Trigger render for active tab
         let activeTab = document.querySelector('.tab-content.active');
         if(activeTab) {
             let id = activeTab.id;
@@ -674,6 +977,7 @@
             if(id === 'MonthTab') renderMonth();
             if(id === 'ExpenseTab') renderExpenses();
             if(id === 'ReportTab') renderReports();
+            if(id === 'PaymentTab' && window.renderPaymentHistory) window.renderPaymentHistory();
             if(id === 'ReturnTab') renderReturns();
         }
     }
@@ -683,16 +987,18 @@
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         event.currentTarget.classList.add('active');
-        
         for(let k in pg) pg[k].p = 1;
 
         if(tabId === 'LedgerTab') renderLedger();
         if(tabId === 'MonthTab') renderMonth();
         if(tabId === 'ExpenseTab') renderExpenses();
         if(tabId === 'ReportTab') renderReports();
+        if(tabId === 'PaymentTab' && window.renderPaymentHistory) window.renderPaymentHistory();
         if(tabId === 'ReturnTab') renderReturns();
         if(tabId === 'NotesTab') renderNotes();
     }
+
+    // ----- REST OF SYSTEM CORE FUNCTIONS -----
 
     function autoSetDates(tab) {
         let prefix = tab === 'returnt' ? 'ret' : tab; 
@@ -709,30 +1015,35 @@
         if(!yF && !bF) return; 
         
         let dateStrings = [];
-        
         data.transactions.forEach(t => {
             if(t.batch && t.date) {
                 let match = true;
-                if(yF && !t.batch.startsWith(yF)) match = false;
+                if(yF) {
+                    let batchHasYear = t.batch.includes(yF);
+                    let dateHasYear = t.date.includes(yF);
+                    if (!batchHasYear && !dateHasYear) match = false;
+                }
                 if(bF && !t.batch.includes(bF)) match = false; 
                 if(match) dateStrings.push(t.date);
             }
         });
-        
         data.expenses.forEach(e => {
             if(e.batch && e.date) {
                 let match = true;
-                if(yF && !e.batch.startsWith(yF)) match = false;
+                if(yF) {
+                    let batchHasYear = e.batch.includes(yF);
+                    let dateHasYear = e.date.includes(yF);
+                    if (!batchHasYear && !dateHasYear) match = false;
+                }
                 if(bF && !e.batch.includes(bF)) match = false;
                 if(match) dateStrings.push(e.date);
             }
         });
         
         if(dateStrings.length > 0) {
-            // String sort logic completely fixes Timezone bugs
             dateStrings.sort();
-            document.getElementById(prefix + 'StartDate').value = dateStrings[0];
-            document.getElementById(prefix + 'EndDate').value = dateStrings[dateStrings.length - 1];
+            if(document.getElementById(prefix + 'StartDate')) document.getElementById(prefix + 'StartDate').value = dateStrings[0];
+            if(document.getElementById(prefix + 'EndDate')) document.getElementById(prefix + 'EndDate').value = dateStrings[dateStrings.length - 1];
         }
         
         if(prefix === 'ledger') renderLedger(); 
@@ -791,7 +1102,6 @@
         dl.style.display = "none"; document.body.appendChild(dl); dl.click(); document.body.removeChild(dl);
     }
 
-    // --- 1. Reg Tab ---
     function saveParty() {
         let editId = document.getElementById('editPartyId').value; let name = document.getElementById('partyName').value.trim();
         let mobile = document.getElementById('partyMobile').value.trim(); let type = document.getElementById('partyType').value;
@@ -820,8 +1130,17 @@
     function delParty(id) { if(confirm("මකන්න විශ්වාසද?")) { data.parties = data.parties.filter(x => x.id !== id); saveData(); updateDropdowns(); renderParties(); } }
     
     function updateDropdowns() {
-        let entryOpts = `<option value="">All / තෝරන්න...</option>` + data.parties.map(p => `<option value="${p.id}">${p.name} (${p.type})</option>`).join('');
-        if(document.getElementById('entryParty')) document.getElementById('entryParty').innerHTML = entryOpts; 
+        let prevEntryParty = document.getElementById('entryParty')?.value;
+        let prevLedgerParty = document.getElementById('ledgerParty')?.value;
+        let prevRetParty = document.getElementById('retParty')?.value;
+        let prevMParty = document.getElementById('mParty')?.value;
+        let prevRepParty = document.getElementById('repParty')?.value;
+
+        let entryOpts = `<option value="" disabled selected>-- තෝරන්න (Select Party) --</option>` + data.parties.map(p => `<option value="${p.id}">${p.name} (${p.type})</option>`).join('');
+        if(document.getElementById('entryParty')) {
+            document.getElementById('entryParty').innerHTML = entryOpts; 
+            if(prevEntryParty) document.getElementById('entryParty').value = prevEntryParty;
+        }
         
         let filterOpts = `<option value="">All / සියලුම</option>
                           <option value="ALL_SHOPS">-- සියලුම කඩවල් (All Shops) --</option>
@@ -830,11 +1149,16 @@
         
         ['ledgerParty', 'retParty', 'mParty', 'repParty'].forEach(id => {
             let el = document.getElementById(id);
-            if(el) el.innerHTML = filterOpts;
+            if(el) {
+                let prevVal = id === 'ledgerParty' ? prevLedgerParty : 
+                              id === 'retParty' ? prevRetParty : 
+                              id === 'mParty' ? prevMParty : prevRepParty;
+                el.innerHTML = filterOpts;
+                if(prevVal) el.value = prevVal;
+            }
         });
     }
 
-    // --- 2. Entry Tab ---
     function buildEntryTable() {
         document.getElementById('entryItemsBody').innerHTML = itemTypes.map(t => `<tr><td style="font-weight:600;">${t}</td><td><input type="number" id="qty_${t}" min="0" oninput="calcEntry()"></td><td><input type="number" id="price_${t}" min="0" oninput="calcEntry()"><div id="note_${t}" class="price-note"></div></td><td><input type="number" id="tot_${t}" readonly tabindex="-1" style="background:#f9fafb; font-weight:bold;"></td></tr>`).join('');
     }
@@ -908,7 +1232,6 @@
         calcEntry(); loadPartyPrices();
     }
 
-    // --- 3. Ledger Tab ---
     function renderLedger() {
         let pid = document.getElementById('ledgerParty').value; let sd = document.getElementById('ledgerStartDate').value; let ed = document.getElementById('ledgerEndDate').value;
         let yF = document.getElementById('ledgerYearF').value; let bF = document.getElementById('ledgerBatchF').value;
@@ -918,10 +1241,10 @@
             if(pid === 'ALL_SUPPLIERS' && t.type !== 'supplier') return false;
             if(pid && pid !== 'ALL_SHOPS' && pid !== 'ALL_SUPPLIERS' && t.partyId !== pid) return false;
             if(sd && t.date < sd) return false; if(ed && t.date > ed) return false;
-            if(yF && t.batch && !t.batch.startsWith(yF)) return false; if(bF && t.batch && !t.batch.includes(bF)) return false; return true;
+            if(yF && t.batch && !t.batch.includes(yF) && /\d{4}/.test(t.batch)) return false; 
+            if(bF && t.batch && !t.batch.includes(bF)) return false; return true;
         }).sort((a,b) => new Date(b.date) - new Date(a.date));
 
-        // Totals calculation
         let fGross = 0, fRet = 0, fNet = 0, fPaid = 0, fDue = 0; let totalDue = 0;
         let shopSums = { Oyster:0, Abalone:0, Milki:0, Dry:0, Other:0 };
         let supSums = { Oyster:0, Abalone:0, Milki:0, Dry:0, Other:0 };
@@ -947,10 +1270,15 @@
         sliced.forEach((t, i) => {
             let p = data.parties.find(x => x.id === t.partyId); let due = t.totalSale - t.payment;
             let itmStr = '', retStr = '';
-            for(let k in t.items) {
-                if(t.items[k].qty > 0) itmStr += `<span style="margin-right:8px; font-weight:600;">${k}:${t.items[k].qty}@${t.items[k].price}</span>`;
-                if(t.items[k].retQty > 0) retStr += `<span style="color:var(--danger); margin-right:8px; font-weight:bold;">${k} [Ret:${t.items[k].retQty}]</span>`;
-            }
+            
+            const itemOrder = ['Oyster', 'Abalone', 'Milki', 'Dry', 'Other'];
+            itemOrder.forEach(k => {
+                if(t.items && t.items[k]) {
+                    if(t.items[k].qty > 0) itmStr += `<span style="margin-right:8px; font-weight:600;">${k}:${t.items[k].qty}@${t.items[k].price}</span>`;
+                    if(t.items[k].retQty > 0) retStr += `<span style="color:var(--danger); margin-right:8px; font-weight:bold;">${k} [Ret:${t.items[k].retQty}]</span>`;
+                }
+            });
+
             html += `<tr><td>${startIndex + i + 1}</td><td><span class="date-link" onclick="viewPayHistory('${t.id}')">${t.date}</span><br><span style="font-size:11px; background:#e5e7eb; padding:2px 5px; border-radius:4px;">${t.batch||'No Batch'}</span></td><td><small style="color:#6b7280;">${p?p.name:'-'}</small></td><td>${itmStr}<br>${retStr}</td><td class="text-right" style="color:#6b7280;">${t.totalOriginal.toFixed(2)}</td><td class="text-right text-danger">${(t.totalOriginal - t.totalSale).toFixed(2)}</td><td class="text-right" style="font-weight:bold; color:var(--primary);">${t.totalSale.toFixed(2)}</td><td class="text-right" style="color:var(--success); font-weight:600;">${t.payment.toFixed(2)}</td><td class="text-right" style="color:${due>0?'var(--danger)':'#1f2937'}; font-weight:bold;">${due.toFixed(2)}</td><td class="text-center"><button class="btn btn-info" style="padding:4px 6px; font-size:12px;" onclick="editTransaction('${t.id}')">E</button> <button class="btn btn-warning" style="padding:4px 6px; font-size:12px;" onclick="openPayModal('${t.id}')">Pay</button> <button class="btn btn-danger" style="padding:4px 6px; font-size:12px;" onclick="openRetModal('${t.id}')">Ret</button> <button class="btn" style="padding:4px 6px; font-size:12px; background:#4b5563;" onclick="delTrans('${t.id}')">X</button></td></tr>`;
         });
         
@@ -977,10 +1305,34 @@
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
     function viewPayHistory(transId) {
-        let t = data.transactions.find(x => x.id === transId); let html = `<table style="width:100%; border-collapse:collapse; margin-top:10px;"><tr><th style="background:#e5e7eb; color:#1f2937;">Date</th><th style="background:#e5e7eb; color:#1f2937;">Type</th><th style="background:#e5e7eb; color:#1f2937;">Amount (Rs)</th></tr>`;
-        if(!t.payHistory || t.payHistory.length === 0) { html += `<tr><td colspan="3" class="text-center">No payment history.</td></tr>`; } else { t.payHistory.forEach(ph => { html += `<tr><td>${ph.date}</td><td>${ph.type}</td><td class="text-right" style="color:var(--success); font-weight:bold;">${parseFloat(ph.amount).toFixed(2)}</td></tr>`; }); }
+        let t = data.transactions.find(x => x.id === transId); 
+        let html = `<table style="width:100%; border-collapse:collapse; margin-top:10px;"><tr><th style="background:#e5e7eb; color:#1f2937;">Date</th><th style="background:#e5e7eb; color:#1f2937;">Type</th><th style="background:#e5e7eb; color:#1f2937;">Amount (Rs)</th><th style="background:#e5e7eb; color:#1f2937;">Action</th></tr>`;
+        if(!t.payHistory || t.payHistory.length === 0) { 
+            html += `<tr><td colspan="4" class="text-center">No payment history.</td></tr>`; 
+        } else { 
+            t.payHistory.forEach((ph, idx) => { 
+                html += `<tr><td>${ph.date}</td><td>${ph.type}</td><td class="text-right" style="color:var(--success); font-weight:bold;">${parseFloat(ph.amount).toFixed(2)}</td><td class="text-center"><button class="btn btn-danger" style="padding:2px 6px; font-size:11px;" onclick="deletePayment('${transId}', ${idx})">X</button></td></tr>`; 
+            }); 
+        }
         html += `</table>`; document.getElementById('payHistoryContainer').innerHTML = html; openModal('payHistoryModal');
     }
+    
+    window.deletePayment = function(transId, idx) {
+        if(confirm("මෙම ගෙවීම මකා දැමීමට අවශ්‍යද? (Delete Payment?)")) {
+            let t = data.transactions.find(x => x.id === transId);
+            let removed = t.payHistory.splice(idx, 1)[0];
+            t.payment -= parseFloat(removed.amount);
+            if(t.payment < 0) t.payment = 0;
+            saveData();
+            viewPayHistory(transId);
+            let activeTab = document.querySelector('.tab-content.active');
+            if(activeTab && activeTab.id === 'LedgerTab') renderLedger();
+            if(activeTab && activeTab.id === 'MonthTab') renderMonth();
+            if(activeTab && activeTab.id === 'ReportTab') renderReports();
+            if(activeTab && activeTab.id === 'PaymentTab' && window.renderPaymentHistory) window.renderPaymentHistory();
+        }
+    };
+
     function openRetModal(id) {
         document.getElementById('retTransId').value = id; let t = data.transactions.find(x => x.id === id); let html = '';
         for(let k in t.items) { if(t.items[k].qty > 0) { html += `<div class="form-group" style="margin-bottom:8px;"><label>${k} (Max Allow: ${t.items[k].qty}) @ Rs.${t.items[k].price}</label><input type="number" id="retInp_${k}" max="${t.items[k].qty}" value="${t.items[k].retQty}"></div>`; } }
@@ -1020,7 +1372,6 @@
         saveData(); renderLedger(); closeModal('bulkPayModal');
     }
 
-    // --- 4. Returns Tab ---
     function renderReturns() {
         let pid = document.getElementById('retParty').value; let sd = document.getElementById('retStartDate').value; let ed = document.getElementById('retEndDate').value;
         let yF = document.getElementById('retYearF').value; let bF = document.getElementById('retBatchF').value;
@@ -1032,7 +1383,7 @@
             if(pid === 'ALL_SHOPS' && origT.type !== 'shop') return false;
             if(pid === 'ALL_SUPPLIERS' && origT.type !== 'supplier') return false;
             if(pid && pid !== 'ALL_SHOPS' && pid !== 'ALL_SUPPLIERS' && r.partyId !== pid) return false;
-            if(yF && origT.batch && !origT.batch.startsWith(yF)) return false;
+            if(yF && origT.batch && !origT.batch.includes(yF) && /\d{4}/.test(origT.batch)) return false;
             if(bF && origT.batch && !origT.batch.includes(bF)) return false;
             return true;
         }).sort((a,b)=>new Date(b.date)-new Date(a.date));
@@ -1054,7 +1405,6 @@
         document.getElementById('retPagination').innerHTML = buildPagination(totalRecords, page, limit, 'ret');
     }
 
-    // --- 5. Month Tab (Day-by-Day) ---
     function renderMonth() {
         let sd = document.getElementById('mStartDate').value; let ed = document.getElementById('mEndDate').value;
         let yF = document.getElementById('mYearF').value; let bF = document.getElementById('mBatchF').value;
@@ -1079,7 +1429,7 @@
                 if(pid === 'ALL_SHOPS' && t.type !== 'shop') return false;
                 if(pid === 'ALL_SUPPLIERS' && t.type !== 'supplier') return false;
                 if(pid && pid !== 'ALL_SHOPS' && pid !== 'ALL_SUPPLIERS' && t.partyId !== pid) return false;
-                if(yF && t.batch && !t.batch.startsWith(yF)) return false;
+                if(yF && t.batch && !t.batch.includes(yF) && /\d{4}/.test(t.batch)) return false;
                 if(bF && t.batch && !t.batch.includes(bF)) return false; return true;
             });
             
@@ -1097,7 +1447,7 @@
             
             data.expenses.filter(e => {
                 if(e.date !== dStr) return false;
-                if(yF && e.batch && !e.batch.startsWith(yF)) return false;
+                if(yF && e.batch && !e.batch.includes(yF) && /\d{4}/.test(e.batch)) return false;
                 if(bF && e.batch && !e.batch.includes(bF)) return false;
                 if(pid && pid !== 'ALL_SHOPS' && pid !== 'ALL_SUPPLIERS') return false; 
                 return true;
@@ -1133,7 +1483,6 @@
         `;
     }
 
-    // --- 6. Expenses ---
     function calcExp() { let r = parseFloat(document.getElementById('expRate').value) || 0; let q = parseFloat(document.getElementById('expQty').value) || 0; document.getElementById('expTotal').value = (r*q).toFixed(2); }
     
     function saveExpense() {
@@ -1183,7 +1532,7 @@
         let yF = document.getElementById('expYearF').value; let bF = document.getElementById('expBatchF').value;
         
         let filteredExp = data.expenses.filter(e => {
-            if(yF && e.batch && !e.batch.startsWith(yF)) return false;
+            if(yF && e.batch && !e.batch.includes(yF) && /\d{4}/.test(e.batch)) return false;
             if(bF && e.batch && !e.batch.includes(bF)) return false;
             return true;
         }).sort((a,b)=>new Date(b.date)-new Date(a.date));
@@ -1200,7 +1549,6 @@
     }
     function delExp(id) { if(confirm("මෙම වාර්තාව මකා දැමීමට අවශ්‍යද?")) { data.expenses = data.expenses.filter(x => x.id !== id); saveData(); renderExpenses(); updateGlobalBatches(false);} }
 
-    // --- 7. ERP Reports (Comprehensive Table & Charts) ---
     function renderReports() {
         let sd = document.getElementById('repStartDate').value; let ed = document.getElementById('repEndDate').value;
         let yF = document.getElementById('repYearF').value; let bF = document.getElementById('repBatchF').value;
@@ -1213,10 +1561,10 @@
         let typeStats = {}; itemTypes.forEach(t => typeStats[t] = { netQty:0, netRs:0 });
         let purTypeStats = {}; itemTypes.forEach(t => purTypeStats[t] = { netQty:0, netRs:0 });
 
-        // Process Transactions
         data.transactions.forEach(t => {
             if(sd && t.date < sd) return; if(ed && t.date > ed) return;
-            if(yF && (!t.batch || !t.batch.startsWith(yF))) return; if(bF && (!t.batch || !t.batch.includes(bF))) return;
+            if(yF && t.batch && !t.batch.includes(yF) && /\d{4}/.test(t.batch)) return; 
+            if(bF && t.batch && !t.batch.includes(bF)) return;
             
             if(pid === 'ALL_SHOPS' && t.type !== 'shop') return;
             if(pid === 'ALL_SUPPLIERS' && t.type !== 'supplier') return;
@@ -1242,12 +1590,11 @@
             for(let k in t.items) { pS.delQty += t.items[k].qty; pS.retQty += t.items[k].retQty; pS.netQty += (t.items[k].qty - t.items[k].retQty); }
         });
         
-        // Add Normal Expenses
         data.expenses.forEach(e => { 
             if(sd && e.date >= sd && ed && e.date <= ed) {
-                if(yF && (!e.batch || !e.batch.startsWith(yF))) return; 
-                if(bF && (!e.batch || !e.batch.includes(bF))) return;
-                if(pid && pid !== 'ALL_SHOPS' && pid !== 'ALL_SUPPLIERS') return; // Hide standard expenses if one specific shop filtered
+                if(yF && e.batch && !e.batch.includes(yF) && /\d{4}/.test(e.batch)) return; 
+                if(bF && e.batch && !e.batch.includes(bF)) return;
+                if(pid && pid !== 'ALL_SHOPS' && pid !== 'ALL_SUPPLIERS') return; 
                 repExpenses += parseFloat(e.total); 
             }
         });
@@ -1261,7 +1608,6 @@
         document.getElementById('repDue').innerText = `Rs. ${totalDue.toFixed(2)}`;
         document.getElementById('repNet').innerText = `Rs. ${netProfit.toFixed(2)}`;
 
-        // Party Table Build
         let tDel=0, tRet=0, tNet=0, tGross=0, tNetVal=0, tPaid=0, tDueAmt=0;
         let sNames = [], sVals = []; let pDataArr = [];
         
@@ -1285,7 +1631,6 @@
         document.getElementById('reportPartyFoot').innerHTML = `<tr><td colspan="3" class="text-right">GRAND TOTALS:</td><td class="text-center">${tDel}</td><td class="text-center" style="color:var(--danger);">${tRet}</td><td class="text-center">${tNet}</td><td class="text-right">${tGross.toFixed(2)}</td><td class="text-right" style="color:var(--primary);">${tNetVal.toFixed(2)}</td><td class="text-right">${tPaid.toFixed(2)}</td><td class="text-right" style="color:var(--danger);">${tDueAmt.toFixed(2)}</td></tr>`;
         document.getElementById('repPartyPagination').innerHTML = buildPagination(totalRecords, page, limit, 'repParty');
 
-        // Type Table Build (Sales)
         let tH = ''; let ttSold = 0, ttRs = 0; let sIdx = 1;
         for(let k in typeStats) {
             ttSold += typeStats[k].netQty; ttRs += typeStats[k].netRs;
@@ -1294,7 +1639,6 @@
         document.querySelector('#reportTypeTable tbody').innerHTML = tH;
         document.getElementById('reportTypeFoot').innerHTML = `<tr><td colspan="2" class="text-right">Total:</td><td class="text-center">${ttSold}</td><td class="text-right">Rs. ${ttRs.toFixed(2)}</td></tr>`;
 
-        // Pur Type Table Build (Suppliers)
         let pH = ''; let ptSold = 0, ptRs = 0; let pIdx = 1;
         for(let k in purTypeStats) {
             ptSold += purTypeStats[k].netQty; ptRs += purTypeStats[k].netRs;
@@ -1303,17 +1647,16 @@
         document.querySelector('#reportPurTypeTable tbody').innerHTML = pH;
         document.getElementById('reportPurTypeFoot').innerHTML = `<tr><td colspan="2" class="text-right">Total:</td><td class="text-center">${ptSold}</td><td class="text-right">Rs. ${ptRs.toFixed(2)}</td></tr>`;
 
-        // --- Data Prep for NEW BATCH LINE CHART ---
         let batchData = {};
         data.transactions.forEach(t => {
-            if(yF && (!t.batch || !t.batch.startsWith(yF))) return;
+            if(yF && t.batch && !t.batch.includes(yF) && /\d{4}/.test(t.batch)) return;
             if(!t.batch) return;
             if(!batchData[t.batch]) batchData[t.batch] = { in: 0, out: 0 };
             if(t.type === 'shop') batchData[t.batch].in += parseFloat(t.payment);
             else batchData[t.batch].out += parseFloat(t.payment);
         });
         data.expenses.forEach(e => {
-            if(yF && (!e.batch || !e.batch.startsWith(yF))) return;
+            if(yF && e.batch && !e.batch.includes(yF) && /\d{4}/.test(e.batch)) return;
             if(!e.batch) return;
             if(!batchData[e.batch]) batchData[e.batch] = { in: 0, out: 0 };
             batchData[e.batch].out += parseFloat(e.total);
@@ -1332,7 +1675,6 @@
             chartProfit.push(batchData[b].in - batchData[b].out);
         });
 
-        // Charts
         setTimeout(() => {
             if(pieChartInstance) pieChartInstance.destroy();
             pieChartInstance = new Chart(document.getElementById('pieChart'), {
@@ -1368,7 +1710,68 @@
         }, 50);
     }
 
-    // --- 8. Notes & Reminders ---
+    window.editGroupedPayment = function(index) {
+        let grp = window.currentPaymentHistory[index];
+        document.getElementById('editPayGrpData').value = index;
+        document.getElementById('editPayGrpDate').value = grp.date;
+        openModal('editPayGroupModal');
+    };
+
+    window.saveGroupedPaymentEdit = function() {
+        let index = document.getElementById('editPayGrpData').value;
+        let newDate = document.getElementById('editPayGrpDate').value;
+        if(!newDate) return alert("කරුණාකර දිනයක් තෝරන්න!");
+
+        let grp = window.currentPaymentHistory[index];
+        
+        grp.transRefs.forEach(ref => {
+            let t = data.transactions.find(x => x.id === ref.transId);
+            if(t) {
+                if (!t.payHistory && parseFloat(t.payment) > 0) {
+                    t.payHistory = [{ date: t.date, amount: parseFloat(t.payment), type: 'Daily Entry' }];
+                }
+                if(t.payHistory) {
+                    let ph = t.payHistory.find(p => p.date === grp.date && p.type === grp.type && parseFloat(p.amount) === ref.amount);
+                    if(ph) {
+                        ph.date = newDate;
+                    }
+                }
+            }
+        });
+        
+        saveData();
+        if(window.renderPaymentHistory) window.renderPaymentHistory();
+        closeModal('editPayGroupModal');
+        alert("දිනය යාවත්කාලීන කරන ලදි! (Date updated successfully)");
+    };
+
+    window.deleteGroupedPayment = function(index) {
+        if(confirm("මෙම ගෙවීම මකා දැමීමට අවශ්‍යද? (Are you sure you want to delete this payment?)")) {
+            let grp = window.currentPaymentHistory[index];
+            
+            grp.transRefs.forEach(ref => {
+                let t = data.transactions.find(x => x.id === ref.transId);
+                if(t) {
+                    if (!t.payHistory && parseFloat(t.payment) > 0) {
+                        t.payHistory = [{ date: t.date, amount: parseFloat(t.payment), type: 'Daily Entry' }];
+                    }
+                    if(t.payHistory) {
+                        let hIdx = t.payHistory.findIndex(ph => ph.date === grp.date && ph.type === grp.type && parseFloat(ph.amount) === ref.amount);
+                        if(hIdx > -1) {
+                            t.payHistory.splice(hIdx, 1);
+                            t.payment -= ref.amount;
+                            if(t.payment < 0) t.payment = 0;
+                        }
+                    }
+                }
+            });
+            
+            saveData();
+            if(window.renderPaymentHistory) window.renderPaymentHistory();
+            alert("ගෙවීම මකා දමන ලදි! (Payment deleted successfully)");
+        }
+    };
+
     function saveNote() {
         let date = document.getElementById('noteDate').value; let text = document.getElementById('noteText').value.trim(); let alarm = document.getElementById('noteAlarm').value;
         if(!date || !text) return alert("කරුණාකර දත්ත ඇතුලත් කරන්න!");
@@ -1391,7 +1794,6 @@
         }
     }
 
-    // --- 9. Settings / Backup ---
     function exportData() {
         let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
         let dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "LUNA_ERP_Backup_" + new Date().toISOString().split('T')[0] + ".json");
@@ -1414,10 +1816,9 @@
     function resetData() { if(confirm("අවවාදයයි! සියලුම දත්ත මැකී යනු ඇත. විශ්වාසද?")) { if(confirm("ඔබට 100% විශ්වාසද?")) { localStorage.removeItem('mush_data_v10'); location.reload(); } } }
 </script>
 
-<!-- FIREBASE AUTHENTICATION & FIRESTORE SCRIPT -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, onSnapshot, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -1433,14 +1834,12 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Enable Offline Data Capabilities in Firebase
     enableIndexedDbPersistence(db).catch((err) => {
         console.log("Offline persistence error:", err.code);
     });
 
     const dataDocRef = doc(db, "erp_system", "v10_data");
 
-    // Send local changes to Firebase
     window.syncToFirebase = function(appData) {
         setDoc(dataDocRef, appData, {merge: false}).catch(e => console.error("Error saving to Firebase:", e));
     };
@@ -1450,7 +1849,6 @@
         const pass = document.getElementById('loginPass').value;
         const err = document.getElementById('loginError');
 
-        // Security check - Allow only specific email
         if(email.toLowerCase() !== "tharindum2022@gmail.com") {
             err.innerText = "මෙම Email එකට පද්ධතියට ඇතුළු විය නොහැක! (Access Denied)";
             err.style.display = "block";
@@ -1468,11 +1866,36 @@
             });
     }
 
+    window.systemLogout = function() {
+        signOut(auth).then(() => {
+            alert("පද්ධතියෙන් සාර්ථකව ඉවත් විය (Logged out successfully).");
+            location.reload();
+        });
+    };
+
+    let idleTimer;
+    function resetIdleTimer() {
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => {
+            if(auth.currentUser) {
+                alert("විනාඩි 10ක් කිසිදු ක්‍රියාවක් නොකළ බැවින් පද්ධතියෙන් ඉවත් විය. (System auto-logged out due to 10 minutes of inactivity!)");
+                window.systemLogout();
+            }
+        }, 600000); 
+    }
+    
+    window.onload = resetIdleTimer;
+    document.onmousemove = resetIdleTimer;
+    document.onkeypress = resetIdleTimer;
+    document.onclick = resetIdleTimer;
+    document.onscroll = resetIdleTimer;
+
     onAuthStateChanged(auth, (user) => {
         if (user && user.email === "tharindum2022@gmail.com") {
             document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'block';
+            resetIdleTimer();
 
-            // Start Realtime Data Auto-Sync Listener
             onSnapshot(dataDocRef, (docSnap) => {
                 if (docSnap.exists()) {
                     let fbData = docSnap.data();
@@ -1480,15 +1903,15 @@
                         window.updateDataFromFirebase(fbData);
                     }
                 } else {
-                    // Initialize Firestore with local data if document is empty
                     if(window.getAppData) {
                         window.syncToFirebase(window.getAppData());
                     }
                 }
             });
-
         } else {
             document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('logoutBtn').style.display = 'none';
+            clearTimeout(idleTimer);
         }
     });
 </script>
